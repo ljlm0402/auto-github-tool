@@ -1,0 +1,31 @@
+{
+  "name": "auto-github-tool",
+  "version": "1.0.0",
+  "description": "A CLI tool to automate GitHub issue handling, branch creation, and PR submission.",
+  "main": "agt.js",
+  "scripts": {
+    "list": "node agt.js list",
+    "issue": "node agt.js issue",
+    "branch": "node agt.js branch",
+    "pr": "node agt.js pr"
+  },
+  "bin": {
+    "agt": "./agt.js"
+  },
+  "dependencies": {
+    "readline-sync": "^1.4.10"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ljlm0402/auto-github-tool.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "AGUMON <ljlm0402@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ljlm0402/auto-github-tool/issues"
+  },
+  "homepage": "https://github.com/ljlm0402/auto-github-tool#readme"
+}

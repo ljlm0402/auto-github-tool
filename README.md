@@ -64,9 +64,7 @@ AGT 개발 과정에서 몇 가지 문제가 발생하였습니다:
 
 ## 사전 준비사항
 - Git이 설치되어 있어야 합니다
-- GitHub 계정이 필요합니다
-- 프로젝트에 dev-fe와 dev-be 브랜치가 존재해야 합니다
-- `.github/CODEOWNERS` 파일이 설정되어 있어야 합니다
+- GitHub 계정이 필요합니다.
 - `.github/pull_request_template.md` 파일이 설정되어 있어야 합니다
 
 ## 설치 방법
@@ -92,102 +90,10 @@ AGT 개발 과정에서 몇 가지 문제가 발생하였습니다:
      6. 자동으로 열리는 브라우저에서 GitHub 로그인
      7. 복사한 코드 입력하여 인증 완료
 
-3. **AGT 스크립트 설치**
+3. **AGT 오픈소스 설치**
    ```bash
    # AGT 스크립트를 위한 디렉터리 생성
-   mkdir -p ~/agt-tool
-
-   # 스크립트 다운로드 및 설치
-   curl -o ~/agt-tool/agt.sh https://raw.githubusercontent.com/boostcampwm-2024/web19-Clovapatra/refs/heads/main/.agt/agt.sh
-   chmod +x ~/agt-tool/agt.sh
-   ```
-
-4. **환경변수 설정**
-   ```bash
-   # .zshrc 파일에 다음 내용 추가
-   echo 'export PATH="$PATH:$HOME/agt-tool"' >> ~/.zshrc
-   echo 'alias agt="agt.sh"' >> ~/.zshrc
-
-   # 설정 적용
-   source ~/.zshrc
-   ```
-
-### 🪟 Windows
-
-1. **GitHub CLI 설치**
-
-   a. 웹 브라우저에서 https://cli.github.com 접속
-
-   b. "Download for Windows" 버튼 클릭
-
-   c. 다운로드된 설치 파일(gh_x.x.x_windows_amd64.msi) 실행
-
-   d. 설치 마법사의 안내에 따라 진행:
-      - "Next" 클릭
-      - 설치 경로 확인 후 "Next" 클릭
-      - "Install" 클릭
-      - 설치 완료 후 "Finish" 클릭
-
-2. **GitHub 계정 연동**
-
-   a. PowerShell 또는 명령 프롬프트를 관리자 권한으로 실행
-
-   b. 다음 명령어 실행:
-   ```powershell
-   gh auth login
-   ```
-
-   c. 프롬프트에 따라 진행:
-      1. `? What account do you want to log into?` → `GitHub.com` 선택 (방향키로 이동 후 Enter)
-      2. `? What is your preferred protocol for Git operations?` → `HTTPS` 선택
-      3. `? Authenticate Git with your GitHub credentials?` → `Yes` 선택
-      4. `? How would you like to authenticate GitHub CLI?` → `Login with a web browser` 선택
-      5. 표시된 one-time code를 복사
-      6. 자동으로 열리는 브라우저에서 GitHub 로그인
-      7. 복사한 코드를 입력하여 인증 완료
-
-3. **AGT 스크립트 설치**
-
-   a. PowerShell을 관리자 권한으로 실행
-
-   b. 다음 명령어들을 순서대로 실행:
-   ```powershell
-   # AGT 스크립트를 위한 디렉터리 생성
-   mkdir "$env:USERPROFILE\agt-tool"
-
-   # 스크립트 다운로드
-   Invoke-WebRequest -Uri "https://raw.githubusercontent.com/boostcampwm-2024/web19-Clovapatra/refs/heads/main/.agt/agt.ps1" -OutFile "$env:USERPROFILE\agt-tool\agt.ps1"
-
-   # agt.cmd 파일 생성 (PowerShell 스크립트를 cmd 명령어로 실행하기 위한 래퍼)
-   @"
-   @echo off
-   powershell -ExecutionPolicy RemoteSigned -File "%USERPROFILE%\agt-tool\agt.ps1" %*
-   "@ | Out-File -FilePath "$env:USERPROFILE\agt-tool\agt.cmd" -Encoding ascii
-
-4. **환경변수 설정**
-
-   a. 시스템 환경 변수 편집창 열기:
-      - Windows 키 + R 을 눌러 실행 창 열기
-      - "sysdm.cpl" 입력 후 확인
-      - "고급" 탭 선택
-      - "환경 변수" 버튼 클릭
-
-   b. Path 환경변수 편집:
-      - "사용자 변수" 섹션에서 "Path" 선택
-      - "편집" 버튼 클릭
-      - "새로 만들기" 버튼 클릭
-      - `%USERPROFILE%\agt-tool` 입력
-      - "확인" 버튼 클릭하여 모든 창 닫기
-
-   c. PowerShell 실행 정책 설정:
-   ```powershell
-   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-   ```
-5. **설치 확인**
-
-   a. 새로운 터미널 창을 열고 다음 명령어로 AGT가 정상적으로 설치되었는지 확인:
-   ```powershell
-   agt --help
+   npm i -g auth-github-tool
    ```
 
 ## 명령어
@@ -202,6 +108,8 @@ $ agt list
 #8   [FE] 게임방 컴포넌트 생성
 #9   [BE] 닉네임을 설정한다
 ```
+### 📌 `agt issue`
+이슈 생성합니다.
 
 ### 🌿 `agt branch`
 이슈 번호를 입력받아 해당 이슈의 제목을 기반으로 새로운 브랜치를 생성합니다.
@@ -270,17 +178,3 @@ Successfully created PR for issue #2
    Error: Current branch is not a feature branch
    ```
    ➡️ 해결: feature-fe-#번호 또는 feature-be-#번호 형식의 브랜치에서만 PR 생성 가능
-
-### 🔄 권한 문제 해결
-
-#### MacOS
-```bash
-# 스크립트 실행 권한 부여
-chmod +x ~/agt-tool/agt.sh
-```
-
-#### Windows
-```powershell
-# PowerShell 실행 정책 변경
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
