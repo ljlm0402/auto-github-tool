@@ -1,3 +1,52 @@
+<h1 align="center">
+<br>
+  <img src="https://github.com/user-attachments/assets/3ff372bb-9216-4537-81e9-59d91960b7ce" alt="Project Logo" />
+  <br>
+    <br>
+  Auto GitHub Tool
+  <br>
+</h1>
+
+<h4 align="center">🤖 A CLI tool to automate GitHub issue handling, branch creation, and PR submission.</h4>
+
+<p align ="center">
+  <a href="https://nodei.co/npm/auto-girhub-tool" target="_blank">
+    <img src="https://nodei.co/npm/auto-girhub-tool.png" alt="npm Info" />
+  </a>
+</p>
+
+<p align="center">
+    <a href="http://npm.im/auto-girhub-tool" target="_blank">
+      <img src="https://img.shields.io/npm/v/auto-girhub-tool.svg" alt="npm Version" />
+    </a>
+    <a href="http://npm.im/auto-girhub-tool" target="_blank">
+      <img src="https://img.shields.io/github/v/release/ljlm0402/auto-girhub-tool" alt="npm Release Version" />
+    </a>
+    <a href="http://npm.im/auto-girhub-tool" target="_blank">
+      <img src="https://img.shields.io/npm/dm/auto-girhub-tool.svg" alt="npm Downloads" />
+    </a>
+    <a href="http://npm.im/auto-girhub-tool" target="_blank">
+      <img src="https://img.shields.io/npm/l/auto-girhub-tool.svg" alt="npm Package License" />
+    </a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/ljlm0402/auto-girhub-tool/stargazers" target="_blank">
+    <img src="https://img.shields.io/github/stars/ljlm0402/auto-girhub-tool" alt="github Stars" />
+  </a>
+  <a href="https://github.com/ljlm0402/auto-girhub-tool/network/members" target="_blank">
+    <img src="https://img.shields.io/github/forks/ljlm0402/auto-girhub-tool" alt="github Forks" />
+  </a>
+  <a href="https://github.com/ljlm0402/auto-girhub-tool/stargazers" target="_blank">
+    <img src="https://img.shields.io/github/contributors/ljlm0402/auto-girhub-tool" alt="github Contributors" />
+  </a>
+  <a href="https://github.com/ljlm0402/auto-girhub-tool/issues" target="_blank">
+    <img src="https://img.shields.io/github/issues/ljlm0402/auto-girhub-tool" alt="github Issues" />
+  </a>
+</p>
+
+<br />
+
 ## AGT 소개
 
 AGT(Automatic GitHub Tool)는 GitHub Issue를 기반으로 브랜치 관리와 풀 리퀘스트(PR) 생성을 자동화하여 개발자의 생산성을 향상시키고, 브랜치 관리의 일관성을 유지하는 도구입니다.
