@@ -88,11 +88,8 @@ agt pr
 ```bash
 $ agt list
 
-=== Open Issues ===
-#2   [BE] 새로운 게임방을 생성한다.
-#4   [BE] 개설된 게임방의 목록을 가져온다.
-#8   [FE] 게임방 컴포넌트 생성
-#9   [BE] 닉네임을 설정한다
+=== 📋 Open Issues ===
+...
 ```
 
 ### 3. 이슈 생성
@@ -121,15 +118,8 @@ $ agt issue
 $ agt branch
 
 === 📋 Open Issues ===
-14      tototo
-13      npm 배포 자동화 Actions 기능 개발
-12      TESTTEST
-11      TTTT
-10      전체 코드 Review
-9       agt --help (도움말) 기능 구현
-8       템플릿 내부 값 동적으로 변경하기
-7       gitHub 웹 인터페이스에서 이슈 템플릿을 인식
-6       전역 설치를 위한 스크립트 설정 및 파일 생성
+...
+
 🔢 Enter issue number to create branch: {issue-number}
 ✅ Branch '{issue-label}/{issue-number}-{issue-title}' created.
 ```
