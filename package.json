@@ -4,6 +4,7 @@
   "description": "A CLI tool to automate GitHub issue handling, branch creation, and PR submission.",
   "main": "agt.js",
   "scripts": {
+    "help": "node agt.js --help",
     "list": "node agt.js list",
     "issue": "node agt.js issue",
     "branch": "node agt.js branch",

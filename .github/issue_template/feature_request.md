@@ -1,16 +1,7 @@
----
-name: Feature Request
-about: Suggest an idea for this project
-title: "[Feature] "
-labels: enhancement
-assignees: ''
-
----
-
 ## 🚀 Feature Request
 
 ### Description
-<!-- A clear and concise description of the feature you would like to be added. -->
+{{description}}
 
 ### Motivation
 <!-- Why is this feature needed? What problem does it solve? -->

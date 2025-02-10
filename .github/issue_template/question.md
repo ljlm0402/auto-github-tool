@@ -1,16 +1,7 @@
----
-name: Question
-about: Ask a question about this project
-title: "[Question] "
-labels: question
-assignees: ''
-
----
-
 ## ❓ Question
 
 ### Context
-<!-- Provide any relevant context about your question. -->
+{{context}}
 
 ### What have you tried?
 <!-- Describe any attempts you have made to find a solution. -->

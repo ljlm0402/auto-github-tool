@@ -1,16 +1,7 @@
----
-name: Bug Report
-about: Report a bug to help us improve
-title: "[Bug] "
-labels: bug
-assignees: ''
-
----
-
 ## 🐛 Bug Report
 
 ### Description
-<!-- A clear and concise description of what the bug is. -->
+{{description}}
 
 ### Steps to Reproduce
 Steps to reproduce the behavior:
