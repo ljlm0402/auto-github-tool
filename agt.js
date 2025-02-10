@@ -1,153 +1,200 @@
-const { execSync } = require('child_process');
+#!/usr/bin/env node
+const { spawnSync } = require('child_process');
 const readlineSync = require('readline-sync');
 const fs = require('fs');
 const path = require('path');
 
-// Git 저장소 여부 확인
-function checkGitRepo() {
+/**
+ * 실행 가능한 명령어를 실행하고 결과를 반환
+ */
+function executeCommand(command, args = []) {
+  const result = spawnSync(command, args, { encoding: 'utf-8', stdio: 'pipe' });
+  if (result.error) throw new Error(`❌ Command execution failed: ${result.error.message}`);
+  if (result.status !== 0) throw new Error(`❌ Command returned an error: ${result.stderr}`);
+  return result.stdout.trim();
+}
+
+/**
+ * Git 저장소인지 확인
+ */
+function validateGitRepository() {
   try {
-    execSync('git rev-parse --is-inside-work-tree', { stdio: 'ignore' });
-  } catch (error) {
-    console.error("Error: Not a git repository. Please run 'git init' first.");
-    process.exit(1);
+    executeCommand('git', ['rev-parse', '--is-inside-work-tree']);
+  } catch {
+    throw new Error("❌ This is not a Git repository. Please run 'git init' first.");
   }
 }
 
-// GitHub CLI 설치 여부 확인
-function checkGhCli() {
+/**
+ * GitHub CLI가 설치되어 있는지 확인
+ */
+function validateGitHubCLI() {
   try {
-    execSync('gh --version', { stdio: 'ignore' });
-  } catch (error) {
-    console.error("Error: GitHub CLI is not installed. Please install it first.");
-    process.exit(1);
+    executeCommand('gh', ['--version']);
+  } catch {
+    throw new Error("❌ GitHub CLI is not installed. Please install it before proceeding.");
   }
 }
 
-// 이슈 템플릿 가져오기
-function getIssueTemplate() {
+/**
+ * 도움말 출력
+ */
+function displayHelp() {
+  console.log(`
+    Usage: agt <command> [options]
+
+    Commands:
+      list           Show open issues
+      issue          Create a new issue
+      branch         Create a branch from an issue
+      pr             Create a pull request
+      --help         Show this help message
+
+    Examples:
+      agt list
+      agt issue
+      agt branch
+      agt pr
+  `);
+}
+
+/**
+ * 이슈 템플릿 가져오기
+ */
+function fetchIssueTemplate() {
   const templateDir = path.join('.github', 'ISSUE_TEMPLATE');
   if (fs.existsSync(templateDir)) {
     const files = fs.readdirSync(templateDir).filter(file => file.endsWith('.md'));
     if (files.length > 0) {
-      console.log("Available Issue Templates:");
+      console.log("📌 Available Issue Templates:");
       files.forEach((file, index) => console.log(`${index + 1}. ${file}`));
       const choice = readlineSync.question("Select a template number or press Enter to skip: ");
-      const templateFile = files[parseInt(choice) - 1];
-      if (templateFile) {
-        return fs.readFileSync(path.join(templateDir, templateFile), 'utf-8');
+      if (files[parseInt(choice) - 1]) {
+        return fs.readFileSync(path.join(templateDir, files[parseInt(choice) - 1]), 'utf-8');
       }
     }
   }
   return "";
 }
 
-// 이슈 목록 출력
-function listIssues() {
-  checkGitRepo();
-  checkGhCli();
+/**
+ * GitHub 이슈 생성
+ */
+function createGitHubIssue() {
   try {
-    const issues = execSync("gh issue list --json number,title -q '.[] | [.number, .title] | @tsv'", { encoding: 'utf-8' });
+    validateGitRepository();
+    validateGitHubCLI();
+  } catch (error) {
+    console.error(error.message);
+    return;
+  }
+
+  const title = readlineSync.question("📝 Enter issue title: ");
+  const body = fetchIssueTemplate() || readlineSync.question("📄 Enter issue description: ");
+  const labels = readlineSync.question("🏷 Enter labels (comma-separated, or press Enter to skip): ");
+  const assignees = readlineSync.question("👥 Enter assignees (comma-separated, or press Enter to skip): ");
+  const milestone = readlineSync.question("📅 Enter milestone (or press Enter to skip): ");
+
+  const args = ['issue', 'create', '--title', title, '--body', body];
+  if (labels) args.push('--label', labels);
+  if (assignees) args.push('--assignee', assignees);
+  if (milestone) args.push('--milestone', milestone);
+
+  try {
+    console.log(executeCommand('gh', args));
+  } catch (error) {
+    console.error("❌ Failed to create issue:", error.message);
+  }
+}
+
+/**
+ * 오픈된 GitHub 이슈 목록 조회
+ */
+function fetchOpenIssues() {
+  try {
+    validateGitRepository();
+    validateGitHubCLI();
+    const issues = executeCommand('gh', ['issue', 'list', '--state', 'open', '--json', 'number,title,labels', '-q', ".[] | [.number, .title, .labels[0].name] | @tsv"]);
     if (!issues.trim()) {
-      console.log("No open issues found.");
+      console.log("✅ No open issues found.");
       return [];
     }
-    console.log("=== Open Issues ===");
+    console.log("=== 📋 Open Issues ===");
     console.log(issues);
     return issues.split('\n').map(line => {
-      const [number, title] = line.split('\t');
-      return { number, title };
+      const [number, title, label] = line.split('\t');
+      return { number, title, label };
     });
   } catch (error) {
-    console.error("Error: Failed to fetch issue list.");
-    process.exit(1);
+    console.error("❌ Unable to fetch open issues:", error.message);
   }
 }
 
-// 이슈 생성
-function createIssue() {
-  checkGitRepo();
-  checkGhCli();
-  const title = readlineSync.question("Enter issue title: ");
-  let body = getIssueTemplate();
-  if (!body) {
-    body = readlineSync.question("Enter issue description: ");
+/**
+ * Git 브랜치 생성
+ */
+function createGitBranch() {
+  const issues = fetchOpenIssues();
+  if (!issues.length) return;
+
+  const issueNumber = readlineSync.question("🔢 Enter issue number to create branch: ");
+  const issue = issues.find(i => i.number === issueNumber);
+  if (!issue) {
+    console.log("❌ Issue not found. Please enter a valid issue number.");
+    return;
   }
 
-  const tempFilePath = path.join(__dirname, 'temp_issue_body.md');
-  fs.writeFileSync(tempFilePath, body, 'utf-8');
+  const branchName = `${issue.label || 'feature'}/${issueNumber}-${issue.title.replace(/\s+/g, '-').toLowerCase()}`;
+  executeCommand('git', ['checkout', '-b', branchName]);
+  console.log(`✅ Branch '${branchName}' has been successfully created.`);
+}
+
+/**
+ * GitHub PR 생성
+ */
+function createGitHubPullRequest() {
+  validateGitRepository();
+  validateGitHubCLI();
+
+  const title = readlineSync.question("📌 Enter PR title: ");
+  const body = readlineSync.question("📝 Enter PR description: ");
+  const reviewers = readlineSync.question("👥 Enter reviewers (comma-separated, or press Enter to skip): ");
 
   try {
-    const output = execSync(`gh issue create --title "${title}" --body-file "${tempFilePath}"`, { encoding: 'utf-8' });
-    console.log("Issue created successfully!\n" + output);
+    const currentUser = executeCommand("gh", ["api", "user", "-q", ".login"]);
+    const currentBranch = executeCommand("git", ["branch", "--show-current"]);
+    console.log(`🚀 Pushing branch '${currentBranch}' to remote repository...`);
+    executeCommand("git", ["push", "-u", "origin", currentBranch]);
+
+    console.log("🔄 Creating a new pull request...");
+    const prArgs = ["pr", "create", "--title", title, "--body", body, "--head", currentBranch, "--assignee", currentUser];
+    if (reviewers) {
+      prArgs.push("--reviewer", reviewers);
+    }
+    console.log(executeCommand("gh", prArgs));
   } catch (error) {
-    console.error("Error: Failed to create issue.");
-    process.exit(1);
-  } finally {
-    fs.unlinkSync(tempFilePath);
+    console.error("❌ Failed to create pull request:", error.message);
   }
 }
 
-// 이슈 기반 브랜치 생성
-function createBranch() {
-  const issues = listIssues();
-  if (issues.length === 0) {
-    console.log("No open issues available to create a branch.");
-    return;
-  }
-
-  const issueNumber = readlineSync.question("Enter issue number to create a branch: ");
-  if (!issues.some(issue => issue.number === issueNumber)) {
-    console.error("Error: Issue number does not exist.");
-    return;
-  }
-
-  const branchName = `feature-#${issueNumber}`;
-  execSync(`git checkout -b ${branchName}`);
-  console.log(`Switched to new branch '${branchName}'`);
-}
-
-// PR 생성
-function createPr() {
-  checkGitRepo();
-  checkGhCli();
-  const currentBranch = execSync("git rev-parse --abbrev-ref HEAD", { encoding: 'utf-8' }).trim();
-  const match = currentBranch.match(/feature-#(\d+)/);
-
-  if (!match) {
-    console.error("Error: Current branch is not a valid feature branch.");
-    process.exit(1);
-  }
-
-  const issueNumber = match[1];
-  const issueTitle = execSync(`gh issue view ${issueNumber} --json title -q .title`, { encoding: 'utf-8' }).trim();
-  const prTitle = `${issueTitle}`;
-
-  const prBody = readlineSync.question("Enter PR description (or press Enter to autofill): ");
-  const command = prBody ?
-    `gh pr create --title "${prTitle}" --body "${prBody}"` :
-    `gh pr create --title "${prTitle}" --fill`;
-
-  execSync(command);
-  console.log("Pull request created successfully!");
-}
-
-// 메인 실행 로직
 const command = process.argv[2];
+
 switch (command) {
   case 'list':
-    listIssues();
+    fetchOpenIssues();
     break;
   case 'issue':
-    createIssue();
+    createGitHubIssue();
     break;
   case 'branch':
-    createBranch();
+    createGitBranch();
     break;
   case 'pr':
-    createPr();
+    createGitHubPullRequest();
+    break;
+  case '--help':
+    displayHelp();
     break;
   default:
-    console.log("Usage: node agt.js <command>");
-    console.log("Available Commands: list, issue, branch, pr");
-    process.exit(1);
+    console.log("❌ Unknown command. Use 'list', 'issue', 'branch', 'pr', or '--help'.");
 }

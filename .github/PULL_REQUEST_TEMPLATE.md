@@ -1,12 +1,3 @@
----
-name: Pull Request
-about: Submit changes to the project
-title: "[PR] "
-labels: enhancement
-assignees: ''
-
----
-
 ## 📌 Summary
 <!-- Provide a short summary of your changes. -->
 
