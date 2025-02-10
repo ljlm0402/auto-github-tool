@@ -10,38 +10,38 @@
 <h4 align="center">🤖 A CLI tool to automate GitHub issue handling, branch creation, and PR submission.</h4>
 
 <p align ="center">
-  <a href="https://nodei.co/npm/auto-girhub-tool" target="_blank">
-    <img src="https://nodei.co/npm/auto-girhub-tool.png" alt="npm Info" />
+  <a href="https://nodei.co/npm/auto-github-tool" target="_blank">
+    <img src="https://nodei.co/npm/auto-github-tool.png" alt="npm Info" />
   </a>
 </p>
 
 <p align="center">
-    <a href="http://npm.im/auto-girhub-tool" target="_blank">
-      <img src="https://img.shields.io/npm/v/auto-girhub-tool.svg" alt="npm Version" />
+    <a href="http://npm.im/auto-github-tool" target="_blank">
+      <img src="https://img.shields.io/npm/v/auto-github-tool.svg" alt="npm Version" />
     </a>
-    <a href="http://npm.im/auto-girhub-tool" target="_blank">
-      <img src="https://img.shields.io/github/v/release/ljlm0402/auto-girhub-tool" alt="npm Release Version" />
+    <a href="http://npm.im/auto-github-tool" target="_blank">
+      <img src="https://img.shields.io/github/v/release/ljlm0402/auto-github-tool" alt="npm Release Version" />
     </a>
-    <a href="http://npm.im/auto-girhub-tool" target="_blank">
-      <img src="https://img.shields.io/npm/dm/auto-girhub-tool.svg" alt="npm Downloads" />
+    <a href="http://npm.im/auto-github-tool" target="_blank">
+      <img src="https://img.shields.io/npm/dm/auto-github-tool.svg" alt="npm Downloads" />
     </a>
-    <a href="http://npm.im/auto-girhub-tool" target="_blank">
-      <img src="https://img.shields.io/npm/l/auto-girhub-tool.svg" alt="npm Package License" />
+    <a href="http://npm.im/auto-github-tool" target="_blank">
+      <img src="https://img.shields.io/npm/l/auto-github-tool.svg" alt="npm Package License" />
     </a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/ljlm0402/auto-girhub-tool/stargazers" target="_blank">
-    <img src="https://img.shields.io/github/stars/ljlm0402/auto-girhub-tool" alt="github Stars" />
+  <a href="https://github.com/ljlm0402/auto-github-tool/stargazers" target="_blank">
+    <img src="https://img.shields.io/github/stars/ljlm0402/auto-github-tool" alt="github Stars" />
   </a>
-  <a href="https://github.com/ljlm0402/auto-girhub-tool/network/members" target="_blank">
-    <img src="https://img.shields.io/github/forks/ljlm0402/auto-girhub-tool" alt="github Forks" />
+  <a href="https://github.com/ljlm0402/auto-github-tool/network/members" target="_blank">
+    <img src="https://img.shields.io/github/forks/ljlm0402/auto-github-tool" alt="github Forks" />
   </a>
-  <a href="https://github.com/ljlm0402/auto-girhub-tool/stargazers" target="_blank">
-    <img src="https://img.shields.io/github/contributors/ljlm0402/auto-girhub-tool" alt="github Contributors" />
+  <a href="https://github.com/ljlm0402/auto-github-tool/stargazers" target="_blank">
+    <img src="https://img.shields.io/github/contributors/ljlm0402/auto-github-tool" alt="github Contributors" />
   </a>
-  <a href="https://github.com/ljlm0402/auto-girhub-tool/issues" target="_blank">
-    <img src="https://img.shields.io/github/issues/ljlm0402/auto-girhub-tool" alt="github Issues" />
+  <a href="https://github.com/ljlm0402/auto-github-tool/issues" target="_blank">
+    <img src="https://img.shields.io/github/issues/ljlm0402/auto-github-tool" alt="github Issues" />
   </a>
 </p>
 
