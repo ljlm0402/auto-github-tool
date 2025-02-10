@@ -1,25 +1,8 @@
 #!/usr/bin/env node
-
 const { spawnSync } = require('child_process');
 const readlineSync = require('readline-sync');
 const fs = require('fs');
 const path = require('path');
-
-// 도움말
-function showHelp() {
-  console.log(`
-Usage: agt <command> [options]
-
-Commands:
-list           오픈된 이슈 목록 조회
-issue         새 이슈 생성 (--template, --description 옵션 지원)
-branch        선택한 이슈 기반 브랜치 생성
-pr            현재 브랜치에서 PR 생성
-
-Options:
---help        사용 가능한 명령어 목록 출력
-`);
-}
 
 function runCommand(command, args = []) {
   const result = spawnSync(command, args, { encoding: 'utf-8', stdio: 'pipe' });
@@ -28,7 +11,6 @@ function runCommand(command, args = []) {
   return result.stdout.trim();
 }
 
-// github 레포지토리 체크
 function checkGitRepo() {
   try {
     runCommand('git', ['rev-parse', '--is-inside-work-tree']);
@@ -37,7 +19,6 @@ function checkGitRepo() {
   }
 }
 
-// gh 버전 체크
 function checkGhCli() {
   try {
     runCommand('gh', ['--version']);
@@ -46,7 +27,25 @@ function checkGhCli() {
   }
 }
 
-// 이슈 템플릿 가져오기
+function showHelp() {
+  console.log(`
+    Usage: agt <command> [options]
+
+    Commands:
+      list           Show open issues
+      issue          Create a new issue
+      branch         Create a branch from an issue
+      pr             Create a pull request
+      --help         Show this help message
+
+    Examples:
+      agt list
+      agt issue
+      agt branch
+      agt pr
+  `);
+}
+
 function getIssueTemplate() {
   const templateDir = path.join('.github', 'ISSUE_TEMPLATE');
   if (fs.existsSync(templateDir)) {
@@ -63,7 +62,6 @@ function getIssueTemplate() {
   return "";
 }
 
-// 이슈 생성
 function createIssue() {
   try {
     checkGitRepo();
@@ -91,7 +89,6 @@ function createIssue() {
   }
 }
 
-// 이슈 목록
 function listIssues() {
   try {
     checkGitRepo();
@@ -112,58 +109,72 @@ function listIssues() {
   }
 }
 
-// 브런치 생성
 function createBranch() {
-  const issueNumber = readlineSync.question("🔢 Enter issue number: ");
-  const issueTitle = readlineSync.question("📝 Enter issue title: ");
-  const branchType = readlineSync.question("🌿 Enter branch type (feature/bug): ", { defaultInput: 'feature' });
-  const branchName = `${branchType}/${issueNumber}-${issueTitle.replace(/\s+/g, '-').toLowerCase()}`;
+  const issues = listIssues();
+  if (!issues.length) return;
 
-  try {
-    runCommand('git', ['checkout', '-b', branchName]);
-    console.log(`✅ Created and switched to branch: ${branchName}`);
-  } catch (error) {
-    console.error("❌ Error: Failed to create branch.", error.message);
+  const issueNumber = readlineSync.question("🔢 Enter issue number to create branch: ");
+  const issue = issues.find(i => i.number === issueNumber);
+  if (!issue) {
+    console.log("❌ Issue not found.");
+    return;
   }
+
+  const branchName = `${issue.label || 'feature'}/${issueNumber}-${issue.title.replace(/\s+/g, '-').toLowerCase()}`;
+  runCommand('git', ['checkout', '-b', branchName]);
+  console.log(`✅ Branch '${branchName}' created.`);
 }
 
-// 풀리퀘 생성
 function createPullRequest() {
-  const issueNumber = readlineSync.question("🔢 Enter issue number: ");
-  const issueTitle = readlineSync.question("📝 Enter issue title: ");
-  const branchType = readlineSync.question("🌿 Enter branch type (feature/bug): ", { defaultInput: 'feature' });
-  const branchName = `${branchType}/${issueNumber}-${issueTitle.replace(/\s+/g, '-').toLowerCase()}`;
-  const prBody = readlineSync.question("📄 Enter PR description: ");
+  checkGitRepo();
+  checkGhCli();
+
+  const title = readlineSync.question("📌 Enter PR title: ");
+  const body = readlineSync.question("📝 Enter PR description: ");
 
   try {
-    runCommand('git', ['push', '-u', 'origin', branchName]);
-    console.log(runCommand('gh', ['pr', 'create', '--title', `[${branchType.toUpperCase()}] ${issueTitle}`, '--body', prBody, '--head', branchName]));
+    // 변경 사항이 있는지 확인
+    const status = runCommand("git", ["status", "--porcelain"]);
+    if (status) {
+      console.log("⚠️ Uncommitted changes detected. Committing changes...");
+      runCommand("git", ["add", "."]);
+      runCommand("git", ["commit", "-m", `"Auto commit before PR: ${title}"`]);
+    }
+
+    // 현재 브랜치 가져오기
+    const currentBranch = runCommand("git", ["branch", "--show-current"]);
+
+    // 브랜치를 원격 저장소에 푸시
+    console.log(`🚀 Pushing branch '${currentBranch}' to remote...`);
+    runCommand("git", ["push", "-u", "origin", currentBranch]);
+
+    // PR 생성 (HEAD 브랜치 지정)
+    console.log("🔄 Creating pull request...");
+    console.log(runCommand("gh", ["pr", "create", "--title", title, "--body", body, "--head", currentBranch]));
   } catch (error) {
     console.error("❌ Error: Failed to create pull request.", error.message);
   }
 }
 
-const args = process.argv.slice(2);
 
-if (args.includes('--help') || args.length === 0) {
+const command = process.argv[2];
+
+switch (command) {
+  case 'list':
+    listIssues();
+    break;
+  case 'issue':
+    createIssue();
+    break;
+  case 'branch':
+    createBranch();
+    break;
+  case 'pr':
+    createPullRequest();
+    break;
+  case '--help':
     showHelp();
-} else {
-    const command = args[0];
-
-    switch (command) {
-      case 'list':
-        listIssues();
-        break;
-      case 'issue':
-        createIssue();
-        break;
-      case 'branch':
-        createBranch();
-        break;
-      case 'pr':
-        createPullRequest();
-        break;
-      default:
-        console.log("❌ Error: Unknown command. Use 'list', 'issue', 'branch', or 'pr'.");
-    }
+    break;
+  default:
+    console.log("❌ Error: Unknown command. Use 'list', 'issue', 'branch', 'pr', or '--help'.");
 }
