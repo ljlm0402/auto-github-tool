@@ -1,13 +1,17 @@
 ## 🚀 Feature Request
 
-### Description
-<!-- A clear and concise description of the feature you would like to be added. -->
-
 ### Motivation
-<!-- Why is this feature needed? What problem does it solve? -->
+<!-- A clear and concise description of what the motivation for the new feature is, and what problem it is solving. -->
+{{ Motivation }}
 
-### Suggested Solution
-<!-- Describe how you would implement this feature, including any alternative solutions you have considered. -->
+### Proposed Solution
+<!-- A clear and concise description of the feature you would like to add, and how it solves the motivating problem. -->
+{{ Solution }}
+
+### Alternatives
+<!-- A clear and concise description of any alternative solutions or features you've considered, and why you're proposed solution is better. -->
+{{ Alternatives }}
 
 ### Additional Context
 <!-- Add any other context or screenshots about the feature request here. -->
+{{ Additional }}

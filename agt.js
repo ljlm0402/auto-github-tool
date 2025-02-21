@@ -37,6 +37,15 @@ function validateGitHubCLI() {
 }
 
 /**
+ * GitHub Issue 필드 값 입력
+ */
+async function replacePlaceholders(template, questions) {
+  return template.replace(/{{\s*(.*?)\s*}}/g, async (match, key) => {
+    return readlineSync.question(questions[key] || `${key}: `);
+  });
+}
+
+/**
  * 도움말 출력
  */
 function displayHelp() {
@@ -61,16 +70,54 @@ function displayHelp() {
 /**
  * 이슈 템플릿 가져오기
  */
-function fetchIssueTemplate() {
+async function fetchIssueTemplate() {
   const templateDir = path.join('.github', 'ISSUE_TEMPLATE');
+
   if (fs.existsSync(templateDir)) {
     const files = fs.readdirSync(templateDir).filter(file => file.endsWith('.md'));
     if (files.length > 0) {
       console.log("📌 Available Issue Templates:");
       files.forEach((file, index) => console.log(`${index + 1}. ${file}`));
+
       const choice = readlineSync.question("Select a template number or press Enter to skip: ");
       if (files[parseInt(choice) - 1]) {
-        return fs.readFileSync(path.join(templateDir, files[parseInt(choice) - 1]), 'utf-8');
+        let template =  fs.readFileSync(path.join(templateDir, files[parseInt(choice) - 1]), 'utf-8');
+        let questions = {};
+
+        const templateChoice = parseInt(choice) - 1;
+        switch (templateChoice) {
+          case 0: { // bug_report.md
+            questions = {
+              'Description': '🐞 Describe the bug clearly: ',
+              'Expected': '✅ What did you expect to happen?: ',
+              'Actual': 'What actually happened?: ',
+              'OS': '💻 What operating system are you using? (e.g., Windows, macOS, Linux): ',
+              'NodeVersion': '🛠 Enter your Node.js version (e.g., 16.x): ',
+              'PackageManagerVersion': '📦 Enter your NPM/Yarn version (e.g., 8.x): ',
+              'Dependencies': '🔗 List any other relevant dependencies (optional): ',
+              'Additional': '📎 Add any additional context (optional): '
+            };
+
+          } break;
+          case 1: { // feature_request
+            questions = {
+              'Motivation': '❓ Explain why this feature is needed and what problem it solves: ',
+              'Solution': '💡 Describe the proposed solution: ',
+              'Alternatives': '🔄 What alternatives have you considered?: ',
+              'Additional': '📎 Add any other relevant information or references (optional): '
+            };
+          } break;
+          case 2: { // question
+            questions = {
+              'Summary': '❓ Summarize your question: ',
+              'Additional': '📎 Add any other relevant information or references (optional): '
+            };
+
+          } break;
+        }
+
+        const result = await replacePlaceholders(template, questions);
+        return result;
       }
     }
   }
