@@ -1,6 +1,6 @@
 {
   "name": "auto-github-tool",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A CLI tool to automate GitHub issue handling, branch creation, and PR submission.",
   "author": "AGUMON <ljlm0402@gmail.com>",
   "license": "MIT",
@@ -13,7 +13,8 @@
     "list": "node agt.js list",
     "issue": "node agt.js issue",
     "branch": "node agt.js branch",
-    "pr": "node agt.js pr"
+    "pr": "node agt.js pr",
+    "label": "node agt.js label"
   },
   "dependencies": {
     "readline-sync": "^1.4.10"

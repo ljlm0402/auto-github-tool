@@ -40,9 +40,30 @@ function validateGitHubCLI() {
  * GitHub Issue 필드 값 입력
  */
 async function replacePlaceholders(template, questions) {
-  return template.replace(/{{\s*(.*?)\s*}}/g, async (match, key) => {
-    return readlineSync.question(questions[key] || `${key}: `);
-  });
+  for (const key in questions) {
+    const prompt = questions[key];
+    template = template.replace(new RegExp(`{{\\s*${key}\\s*}}`, 'g'), readlineSync.question(prompt));
+  }
+  return template;
+}
+
+/**
+ * GitHub 저장소에서 라벨 목록을 가져옴
+ */
+function fetchGitHubLabels() {
+  try {
+    const labels = executeCommand('gh', ['label', 'list', '--json', 'name', '-q', '.[] | .name']);
+    if (!labels.trim()) {
+      console.log("✅ No labels found.");
+      return [];
+    }
+    console.log("=== 📋 Available Labels ===");
+    console.log(labels);
+    return labels.split('\n').map(label => label.trim());
+  } catch (error) {
+    console.error("❌ Failed to fetch labels:", error.message);
+    return [];
+  }
 }
 
 /**
@@ -80,11 +101,11 @@ async function fetchIssueTemplate() {
       files.forEach((file, index) => console.log(`${index + 1}. ${file}`));
 
       const choice = readlineSync.question("Select a template number or press Enter to skip: ");
-      if (files[parseInt(choice) - 1]) {
-        let template =  fs.readFileSync(path.join(templateDir, files[parseInt(choice) - 1]), 'utf-8');
+      const templateChoice = parseInt(choice) - 1;
+      if (files[templateChoice]) {
+        let template = fs.readFileSync(path.join(templateDir, files[templateChoice]), 'utf-8');
         let questions = {};
 
-        const templateChoice = parseInt(choice) - 1;
         switch (templateChoice) {
           case 0: { // bug_report.md
             questions = {
@@ -97,9 +118,8 @@ async function fetchIssueTemplate() {
               'Dependencies': '🔗 List any other relevant dependencies (optional): ',
               'Additional': '📎 Add any additional context (optional): '
             };
-
           } break;
-          case 1: { // feature_request
+          case 1: { // feature_request.md
             questions = {
               'Motivation': '❓ Explain why this feature is needed and what problem it solves: ',
               'Solution': '💡 Describe the proposed solution: ',
@@ -107,12 +127,11 @@ async function fetchIssueTemplate() {
               'Additional': '📎 Add any other relevant information or references (optional): '
             };
           } break;
-          case 2: { // question
+          case 2: { // question.md
             questions = {
               'Summary': '❓ Summarize your question: ',
-              'Additional': '📎 Add any other relevant information or references (optional): '
+              'Additional': '📎 Add any other relevant information (optional): '
             };
-
           } break;
         }
 
@@ -127,7 +146,7 @@ async function fetchIssueTemplate() {
 /**
  * GitHub 이슈 생성
  */
-function createGitHubIssue() {
+async function createGitHubIssue() {
   try {
     validateGitRepository();
     validateGitHubCLI();
@@ -137,18 +156,38 @@ function createGitHubIssue() {
   }
 
   const title = readlineSync.question("📝 Enter issue title: ");
-  const body = fetchIssueTemplate() || readlineSync.question("📄 Enter issue description: ");
-  const labels = readlineSync.question("🏷 Enter labels (comma-separated, or press Enter to skip): ");
-  const assignees = readlineSync.question("👥 Enter assignees (comma-separated, or press Enter to skip): ");
+  const body = await fetchIssueTemplate() || readlineSync.question("📄 Enter issue description: ");
+
+  // 라벨 목록을 받아와서 선택하도록 처리
+  const availableLabels = fetchGitHubLabels();
+  let selectedLabels = '';  // selectedLabels 변수 선언
+
+  if (availableLabels.length > 0) {
+    const labelChoice = readlineSync.keyInSelect(availableLabels, "Select label(s) for the issue (use comma for multiple):");
+    if (labelChoice !== -1) {
+      selectedLabels = availableLabels[labelChoice]; // 선택된 라벨 저장
+      console.log(`🏷 Selected Label: ${selectedLabels}`);
+    }
+  }
+
+  // Assignees 입력, 없으면 자동으로 자신의 GitHub 계정으로 설정
+  let assignees = readlineSync.question("👥 Enter assignees (comma-separated, or press Enter to skip): ");
+  if (!assignees) {
+    const currentUser = executeCommand("gh", ["api", "user", "-q", ".login"]);
+    assignees = currentUser;  // 자신의 계정 자동 추가
+    console.log(`👥 Assignee set to your account: ${assignees}`);
+  }
+
   const milestone = readlineSync.question("📅 Enter milestone (or press Enter to skip): ");
 
   const args = ['issue', 'create', '--title', title, '--body', body];
-  if (labels) args.push('--label', labels);
-  if (assignees) args.push('--assignee', assignees);
+  if (selectedLabels) args.push('--label', selectedLabels);  // 선택된 라벨을 args에 추가
+  if (assignees) args.push('--assignee', assignees);  // assignee 추가
   if (milestone) args.push('--milestone', milestone);
 
   try {
     console.log(executeCommand('gh', args));
+    console.log("✅ GitHub issue created successfully.");
   } catch (error) {
     console.error("❌ Failed to create issue:", error.message);
   }
@@ -199,28 +238,59 @@ function createGitBranch() {
 /**
  * GitHub PR 생성
  */
-function createGitHubPullRequest() {
+async function createGitHubPullRequest() {
   validateGitRepository();
   validateGitHubCLI();
 
   const title = readlineSync.question("📌 Enter PR title: ");
   const body = readlineSync.question("📝 Enter PR description: ");
-  const reviewers = readlineSync.question("👥 Enter reviewers (comma-separated, or press Enter to skip): ");
+
+  // Assignees 입력, 없으면 자동으로 자신의 GitHub 계정으로 설정
+  let assignees = readlineSync.question("👥 Enter reviewers (comma-separated, or press Enter to skip): ");
+  if (!assignees) {
+    const currentUser = executeCommand("gh", ["api", "user", "-q", ".login"]);
+    assignees = currentUser;  // 자신의 계정 자동 추가
+    console.log(`👥 Assignee set to your account: ${assignees}`);
+  }
 
   try {
-    const currentUser = executeCommand("gh", ["api", "user", "-q", ".login"]);
     const currentBranch = executeCommand("git", ["branch", "--show-current"]);
     console.log(`🚀 Pushing branch '${currentBranch}' to remote repository...`);
     executeCommand("git", ["push", "-u", "origin", currentBranch]);
 
     console.log("🔄 Creating a new pull request...");
-    const prArgs = ["pr", "create", "--title", title, "--body", body, "--head", currentBranch, "--assignee", currentUser];
-    if (reviewers) {
-      prArgs.push("--reviewer", reviewers);
-    }
+    const prArgs = ["pr", "create", "--title", title, "--body", body, "--head", currentBranch, "--assignee", assignees];
     console.log(executeCommand("gh", prArgs));
+    console.log("✅ Pull request created successfully.");
   } catch (error) {
     console.error("❌ Failed to create pull request:", error.message);
+  }
+}
+
+/**
+ * GitHub 라벨 생성
+ */
+function createGitHubLabel() {
+  try {
+    validateGitRepository();
+    validateGitHubCLI();
+  } catch (error) {
+    console.error(error.message);
+    return;
+  }
+
+  const labelName = readlineSync.question("🏷 Enter label name: ");
+  const labelColor = readlineSync.question("🎨 Enter label color (optional, default is 'FFFFFF'): ") || 'FFFFFF';
+  const labelDescription = readlineSync.question("📝 Enter label description (optional): ");
+
+  const args = ['label', 'create', labelName, '--color', labelColor];
+  if (labelDescription) args.push('--description', labelDescription);
+
+  try {
+    console.log(executeCommand('gh', args));
+    console.log(`✅ Label '${labelName}' has been successfully created.`);
+  } catch (error) {
+    console.error("❌ Failed to create label:", error.message);
   }
 }
 
@@ -239,6 +309,9 @@ switch (command) {
   case 'pr':
     createGitHubPullRequest();
     break;
+  case 'label':
+    createGitHubLabel();
+  break;
   case '--help':
     displayHelp();
     break;
