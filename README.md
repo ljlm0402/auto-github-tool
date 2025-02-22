@@ -104,31 +104,35 @@ gh --version  # 설치 확인
 ### 1. 명령어 개요
 
 ```sh
-agt --help    # 사용 가능한 명령어 목록 출력
+agt help      # 사용 가능한 명령어 목록 출력
 agt list      # 오픈된 이슈 목록 조회
-agt issue     # 새 이슈 생성 (제목 입력 지원)
+agt issue     # 새 이슈 생성
 agt branch    # 선택한 이슈 기반 브랜치 생성
 agt pr        # 현재 브랜치에서 PR 생성
+agt label     # label 생성
 ```
 
 ### 2. 도움말
 ```sh
-$ agt --help
+$ agt help
 
 Usage: agt <command> [options]
 
 Commands:
+help           Show this help message
 list           Show open issues
 issue          Create a new issue
 branch         Create a branch from an issue
 pr             Create a pull request
---help         Show this help message
+label          Create a new label
 
 Examples:
+agt help
 agt list
 agt issue
 agt branch
 agt pr
+agt label
 ```
 
 ### 3. 이슈 목록 조회
@@ -138,6 +142,7 @@ agt pr
 $ agt list
 
 === 📋 Open Issues ===
+{issue-number} {issue-title} {issue-label}
 ...
 ```
 
@@ -147,30 +152,58 @@ $ agt list
 ```bash
 $ agt issue
 
-> 📝 Enter issue title: {issue-title}
+> 📍 Enter issue title: {issue-title}
+
 📌 Available Issue Templates:
 1. bug_report.md
 2. feature_request.md
 3. question.md
-> Select a template number or press Enter to skip: {issue-number}
-> 🏷 Enter labels (comma-separated, or press Enter to skip): {issue-labels}
+> Select a template number or press Enter to skip: {issue-template-number}
+
+// If issue template is not selected (When selected, input items are added based on the contents of the template.)
+> 📝 Enter issue description: {issue-description}
+
 > 👥 Enter assignees (comma-separated, or press Enter to skip): {issue-assignees}
+> 👥 Assignee set to your account: {your-github-account} (skip)
+
+=== 📋 Available Labels ===
+[1] bug
+[2] documentation
+[3] duplicate
+[4] enhancement
+[5] good first issue
+[6] help wanted
+[7] invalid
+[8] question
+[9] wontfix
+> 🏷 Select labels [1...9]: {issue-lables-number}
+> 🏷️ Selected Labels: [{issue-labels-name}]
+
 > 📅 Enter milestone (or press Enter to skip): {issue-milestone}
 
+✅ GitHub issue created successfully.
 ```
 
 ### 4. 브랜치 생성
 이슈 번호를 입력받아 해당 이슈의 제목을 기반으로 새로운 브랜치를 생성합니다.
-- 브랜치 명명 규칙: `{issue-label(feature/bug)}/{issue-number}-{issue-title}`
+- 브랜치 명명 규칙: `{branch-types(feature, bugfix, hotfix, release)}/{issue-number}-{issue-title}`
 
 ```bash
 $ agt branch
 
 === 📋 Open Issues ===
+{issue-number} {issue-title} {issue-label}
 ...
+> 🔢 Enter issue number to create branch: {issue-number}
 
-🔢 Enter issue number to create branch: {issue-number}
-✅ Branch '{issue-label}/{issue-number}-{issue-title}' created.
+📌 Select a branch type:
+[1] feature - Develop new features
+[2] bugfix - Fix bugs
+[3] hotfix - Urgent fixes
+[4] release - Prepare for a release
+> 🔢 Enter the branch type number: {branch-type-number}
+
+✅ Branch '{branch-type}/{issue-number}-{issue-title}' created.
 ```
 
 ### 5. Pull Request 생성
@@ -179,11 +212,51 @@ $ agt branch
 ```bash
 $ agt pr
 
-📌 Enter PR title: {pr-title}
-📝 Enter PR description: {pr-description}
-👥 Enter reviewers (comma-separated, or press Enter to skip): {pr-reviewers}
-🚀 Pushing branch '{issue-label}/{issue-number}-{pr-title}' to remote repository...
+> 📌 Enter PR title: {pull-request-title}
+> 📌 Provide a short summary of your changes: {pull-request-summary}
+
+=== 📋 Open Issues ===
+
+> 🔍 Enter the related issue number (e.g., #32): {pull-request-issue-number}
+
+> ✨ Describe the major changes in your PR: {pull-request-changes}
+
+> ✅ Have you tested the changes locally? (yes/no): {pull-request-tested}
+
+> 📏 Does your code follow the project’s style guidelines? (yes/no): {pull-request-guidelines}
+
+> 📖 Have you updated the documentation if necessary? (yes/no): {pull-request-documentation}
+
+> 🔗 Add any additional information (optional): {pull-request-additional}
+
+> 👀 Enter reviewers (comma-separated, or press Enter to skip): {pull-request-reviewers}
+
+> 👥 Enter assignees (comma-separated, or press Enter to skip): {pull-request-assignees}
+> 👥 Assignee set to your account: {your-github-account}
+
+=== 📋 Available Labels ===
+[1] bug
+[2] documentation
+[3] duplicate
+[4] enhancement
+[5] good first issue
+[6] help wanted
+[7] invalid
+[8] question
+[9] wontfix
+> 🏷 Select labels [1...9]: {issue-lables-number}
+> 🏷️ Selected Labels: [{issue-labels-name}]
+
+> 📅 Enter milestone (or press Enter to skip): {pull-request-milestone}
+
+[1] HEAD -> origin/master
+[2] development
+[3] master
+> 🌿 Select base branch: {base-branch-number}
+
+🚀 Pushing branch {currentBranch} to remote repository...
 🔄 Creating a new pull request...
+✅ Pull request created successfully.
 ```
 
 ## 문제 해결
