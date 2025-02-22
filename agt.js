@@ -82,14 +82,15 @@ function displayHelp() {
      Usage: agt <command> [options]
 
      Commands:
+       help           Show this help message
        list           Show open issues
        issue          Create a new issue
        branch         Create a branch from an issue
        pr             Create a pull request
        label          Create a new label
-       --help         Show this help message
 
      Examples:
+       agt help
        agt list
        agt issue
        agt branch
@@ -452,6 +453,9 @@ function createGitHubLabel() {
 const command = process.argv[2];
 
 switch (command) {
+  case 'help':
+    displayHelp();
+    break;
   case 'list':
     fetchOpenIssues();
     break;
@@ -467,9 +471,6 @@ switch (command) {
   case 'label':
     createGitHubLabel();
     break;
-  case '--help':
-    displayHelp();
-    break;
   default:
-    console.log("❌ Unknown command. Use 'list', 'issue', 'branch', 'pr', or '--help'.");
+    console.log("❌ Unknown command. Use 'list', 'issue', 'branch', 'pr', 'lbael' or 'help'.");
 }
