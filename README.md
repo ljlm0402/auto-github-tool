@@ -105,7 +105,7 @@ gh --version  # Check installation
    ```bash
    # Install via Homebrew (macOS)
    brew install gh
-   
+
    # Other platforms: https://cli.github.com/
    ```
 
@@ -116,6 +116,7 @@ gh --version  # Check installation
    ```
 
    Follow the prompts:
+
    1. `? What account do you want to log into?` → Select `GitHub.com`
    2. `? What is your preferred protocol for Git operations?` → Select `HTTPS`
    3. `? Authenticate Git with your GitHub credentials?` → Select `Yes`
@@ -442,16 +443,19 @@ agt
 ### Contributing to the Project
 
 1. **Create an issue**
+
    ```bash
    agt issue
    ```
 
 2. **Create a branch**
+
    ```bash
    agt branch
    ```
 
 3. **Make changes and commit**
+
    ```bash
    git add .
    git commit -m "feat: Add new feature"
@@ -520,3 +524,9 @@ Or you can automate your workflow using `agt`! 😉
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+---
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/ljlm0402">AGUMON</a> 🦖
+</p>
