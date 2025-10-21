@@ -1,23 +1,35 @@
 {
   "name": "auto-github-tool",
-  "version": "1.0.2",
-  "description": "A CLI tool to automate GitHub issue handling, branch creation, and PR submission.",
+  "version": "2.0.0",
+  "description": "A CLI tool to automate GitHub issue handling, branch creation, and PR submission with interactive mode.",
   "author": "AGUMON <ljlm0402@gmail.com>",
   "license": "MIT",
-  "keywords": ["automatic", "github", "cli", "tools", "issue", "branch", "pull-request"],
-  "main": "agt.js",
+  "keywords": [
+    "automatic",
+    "github",
+    "cli",
+    "tools",
+    "issue",
+    "branch",
+    "pull-request"
+  ],
+  "main": "bin/agt.js",
   "bin": {
-    "agt": "./agt.js"
+    "agt": "./bin/agt.js"
   },
   "scripts": {
-    "help": "node agt.js help",
-    "list": "node agt.js list",
-    "issue": "node agt.js issue",
-    "branch": "node agt.js branch",
-    "pr": "node agt.js pr",
-    "label": "node agt.js label"
+    "start": "node bin/agt.js",
+    "help": "node bin/agt.js help",
+    "list": "node bin/agt.js list",
+    "issue": "node bin/agt.js issue",
+    "branch": "node bin/agt.js branch",
+    "pr": "node bin/agt.js pr",
+    "label": "node bin/agt.js label"
   },
   "dependencies": {
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.7",
+    "ora": "^5.4.1",
     "readline-sync": "^1.4.10"
   },
   "publishConfig": {

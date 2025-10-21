@@ -45,98 +45,91 @@
   </a>
 </p>
 
-<p align="center">
-  <a href="./README.ko.md">한국어</a> •
-  <a href="./README.md">English</a>
-</p>
-
 <br />
 
-## Introduction
+## AGT 소개
 
-AGT (Auto GitHub Tool) is a CLI tool that automates branch management and pull request creation based on GitHub Issues, improving developer productivity and maintaining consistency in branch management.
+AGT(Auto GitHub Tool)는 GitHub Issue를 기반으로 브랜치 관리와 풀 리퀘스트(PR) 생성을 자동화하여 개발자의 생산성을 향상시키고, 브랜치 관리의 일관성을 유지하는 CLI 도구입니다.
 
-### ✨ Key Features
+### ✨ 주요 기능
 
-- **🎯 Interactive Menu Mode**: Easy access to all features through an intuitive menu
-- **📋 Issue Management**: View issue lists and create issues using templates
-- **🌿 Branch Automation**: Automatically create issue-based branches (feature/bugfix/hotfix/release)
-- **🔀 PR Creation**: Automatically create pull requests using templates
-- **🏷️ Label Management**: Create and manage GitHub labels
-- **⚙️ Configuration File**: Support for project-specific or global settings (.agtrc.json)
-- **🎨 Enhanced UX**: Better user experience with colored output, spinners, and input validation
+- **🎯 대화형 메뉴 모드**: 직관적인 메뉴로 모든 기능에 쉽게 접근
+- **📋 이슈 관리**: 이슈 목록 조회 및 템플릿 기반 이슈 생성
+- **🌿 브랜치 자동화**: 이슈 기반 브랜치 자동 생성 (feature/bugfix/hotfix/release)
+- **🔀 PR 생성**: 템플릿 기반 풀 리퀘스트 자동 생성
+- **🏷️ 라벨 관리**: GitHub 라벨 생성 및 관리
+- **⚙️ 설정 파일**: 프로젝트별 또는 전역 설정 지원 (.agtrc.json)
+- **🎨 향상된 UX**: 컬러 출력, 스피너, 입력 검증으로 더 나은 사용자 경험
 
-## 📋 Table of Contents
+## 📋 목차
 
-- [Requirements](#-requirements)
-- [Installation](#-installation)
-- [Usage](#-usage)
-  - [Interactive Mode](#interactive-mode-recommended)
-  - [Direct Commands](#direct-commands)
-  - [Configuration File](#configuration-file)
-- [Command Guide](#-command-guide)
-  - [Help](#1-help)
-  - [List Issues](#2-list-issues)
-  - [Create Issue](#3-create-issue)
-  - [Create Branch](#4-create-branch)
-  - [Create Pull Request](#5-create-pull-request)
-  - [Create Label](#6-create-label)
-- [Project Structure](#-project-structure)
-- [Developer Guide](#-developer-guide)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License](#-license)
+- [요구 사항](#-요구-사항)
+- [설치 및 실행](#-설치-및-실행)
+- [사용법](#-사용법)
+  - [대화형 모드](#대화형-모드-권장)
+  - [직접 명령어 사용](#직접-명령어-사용)
+  - [설정 파일](#설정-파일)
+- [명령어 가이드](#-명령어-가이드)
+  - [도움말](#1-도움말)
+  - [이슈 목록 조회](#2-이슈-목록-조회)
+  - [이슈 생성](#3-이슈-생성)
+  - [브랜치 생성](#4-브랜치-생성)
+  - [Pull Request 생성](#5-pull-request-생성)
+  - [라벨 생성](#6-라벨-생성)
+- [프로젝트 구조](#-프로젝트-구조)
+- [개발자 가이드](#-개발자-가이드)
+- [문제 해결](#-문제-해결)
+- [기여하기](#-기여하기)
+- [라이선스](#-라이선스)
 
-## 📌 Requirements
+## 📌 요구 사항
 
-- Node.js 14 or higher
-- GitHub CLI (gh) installation required
-- GitHub account
+- Node.js 14 이상
+- GitHub CLI (gh) 설치 필요
+- GitHub 계정이 필요합니다.
 
 ```sh
-node -v # Check version
-gh --version  # Check installation
+node -v # 버전 확인
+gh --version  # 설치 확인
 ```
 
-## 🚀 Installation
+## 🚀 설치 및 실행
 
-1. **Install GitHub CLI**
+1. **GitHub CLI 설치**
 
    ```bash
-   # Install via Homebrew (macOS)
+   # Homebrew를 통한 설치
    brew install gh
-   
-   # Other platforms: https://cli.github.com/
    ```
 
-2. **Authenticate GitHub Account**
+2. **GitHub 계정 연동**
 
    ```bash
    gh auth login
    ```
 
-   Follow the prompts:
-   1. `? What account do you want to log into?` → Select `GitHub.com`
-   2. `? What is your preferred protocol for Git operations?` → Select `HTTPS`
-   3. `? Authenticate Git with your GitHub credentials?` → Select `Yes`
-   4. `? How would you like to authenticate GitHub CLI?` → Select `Login with a web browser`
-   5. Copy the one-time code displayed
-   6. Log in to GitHub in the automatically opened browser
-   7. Enter the copied code to complete authentication
+   - 프롬프트에 따라 진행:
+     1. `? What account do you want to log into?` → `GitHub.com` 선택
+     2. `? What is your preferred protocol for Git operations?` → `HTTPS` 선택
+     3. `? Authenticate Git with your GitHub credentials?` → `Yes` 선택
+     4. `? How would you like to authenticate GitHub CLI?` → `Login with a web browser` 선택
+     5. 표시된 one-time code를 복사
+     6. 자동으로 열리는 브라우저에서 GitHub 로그인
+     7. 복사한 코드 입력하여 인증 완료
 
-3. **Install AGT**
+3. **AGT 설치**
 
    ```bash
    npm install -g auto-github-tool
    ```
 
-   After installation, you can use the `agt` command.
+   설치 후 `agt` 명령어를 사용하여 실행할 수 있습니다.
 
-## 🛠 Usage
+## 🛠 사용법
 
-### Interactive Mode (Recommended)
+### 대화형 모드 (권장)
 
-The easiest way to use AGT. Simply type `agt` without any command to display the interactive menu:
+가장 쉬운 사용 방법입니다. 명령어 없이 `agt`만 입력하면 대화형 메뉴가 표시됩니다:
 
 ```bash
 $ agt
@@ -158,37 +151,37 @@ $ agt
   🚪 Exit
 ```
 
-### Direct Commands
+### 직접 명령어 사용
 
-You can directly execute specific tasks by entering commands:
+특정 작업을 바로 실행하고 싶다면 명령어를 직접 입력할 수 있습니다:
 
 ```bash
-agt help      # Show available commands
-agt list      # View open issues
-agt issue     # Create a new issue
-agt branch    # Create a branch from an issue
-agt pr        # Create a PR from current branch
-agt label     # Create a label
-agt config    # Initialize configuration
+agt help      # 사용 가능한 명령어 목록 출력
+agt list      # 오픈된 이슈 목록 조회
+agt issue     # 새 이슈 생성
+agt branch    # 선택한 이슈 기반 브랜치 생성
+agt pr        # 현재 브랜치에서 PR 생성
+agt label     # 라벨 생성
+agt config    # 설정 초기화
 ```
 
-### Configuration File
+### 설정 파일
 
-AGT supports project-specific or global configuration.
+AGT는 프로젝트별 또는 전역 설정을 지원합니다.
 
-#### Initialize Configuration
+#### 설정 초기화
 
 ```bash
-# Local project configuration (.agtrc.json)
+# 프로젝트 로컬 설정 (.agtrc.json)
 $ agt config
 
-# Global configuration (~/.agtrc.json)
+# 전역 설정 (~/.agtrc.json)
 $ agt config --global
 ```
 
-#### Configuration File Example (.agtrc.json)
+#### 설정 파일 예시 (.agtrc.json)
 
-The project includes a `.agtrc.example.json` file. Copy it to use:
+프로젝트에 `.agtrc.example.json` 파일이 포함되어 있습니다. 이를 복사해서 사용하세요:
 
 ```bash
 cp .agtrc.example.json .agtrc.json
@@ -209,17 +202,17 @@ cp .agtrc.example.json .agtrc.json
 }
 ```
 
-**Configuration Options:**
+**설정 항목:**
 
-- `defaultBaseBranch`: Default base branch when creating PRs
-- `branchTypes`: Define branch types
-- `autoAssign`: Automatically assign yourself
-- `defaultLabels`: Default labels to apply
-- `autoTemplates`: Automatically use templates
+- `defaultBaseBranch`: PR 생성 시 기본 base 브랜치
+- `branchTypes`: 브랜치 타입 정의
+- `autoAssign`: 자동으로 자신을 assignee로 설정
+- `defaultLabels`: 기본으로 적용할 라벨 목록
+- `autoTemplates`: 템플릿 자동 사용 여부
 
-## 📚 Command Guide
+## 📚 명령어 가이드
 
-### 1. Help
+### 1. 도움말
 
 ```bash
 $ agt help
@@ -251,9 +244,9 @@ Quick Start:
   $ agt config         # Initialize configuration
 ```
 
-### 2. List Issues
+### 2. 이슈 목록 조회
 
-View all open issues in the current repository.
+현재 저장소의 모든 오픈 이슈를 조회합니다.
 
 ```bash
 $ agt list
@@ -265,9 +258,9 @@ $ agt list
 125 Update documentation [documentation]
 ```
 
-### 3. Create Issue
+### 3. 이슈 생성
 
-Create issues using templates.
+템플릿을 활용한 이슈 생성을 지원합니다.
 
 ```bash
 $ agt issue
@@ -302,11 +295,11 @@ Select a template number or press Enter to skip: 1
 ✅ GitHub issue created successfully.
 ```
 
-### 4. Create Branch
+### 4. 브랜치 생성
 
-Automatically create a branch by selecting an issue number.
+이슈 번호를 선택하여 자동으로 브랜치를 생성합니다.
 
-**Branch Naming Convention:** `{type}/{issue-number}-{sanitized-title}`
+**브랜치 명명 규칙:** `{type}/{issue-number}-{sanitized-title}`
 
 ```bash
 $ agt branch
@@ -330,14 +323,14 @@ $ agt branch
 ✅ Branch 'bugfix/123-fix-login-bug' has been successfully created.
 ```
 
-### 5. Create Pull Request
+### 5. Pull Request 생성
 
-Automatically create a PR from the current branch. Supports templates and can automatically link related issues.
+현재 브랜치에서 PR을 자동으로 생성합니다. 템플릿을 지원하며 관련 이슈를 자동으로 연결할 수 있습니다.
 
 ```bash
 $ agt pr
 
-📍 Enter PR title: Fix login authentication bug
+� Enter PR title: Fix login authentication bug
 
 📌 Provide a short summary of your changes: Fixed session validation logic
 
@@ -378,9 +371,9 @@ Found 3 commit(s) to push.
 ✅ Pull request created successfully.
 ```
 
-### 6. Create Label
+### 6. 라벨 생성
 
-Create a new label in the GitHub repository.
+GitHub 저장소에 새로운 라벨을 생성합니다.
 
 ```bash
 $ agt label
@@ -393,130 +386,67 @@ $ agt label
 ✅ Label 'urgent' has been successfully created.
 ```
 
-## 📁 Project Structure
+## 🔍 문제 해결
 
-```
-auto-github-tool/
-├── bin/
-│   └── agt.js               # CLI entry point and main logic
-├── src/
-│   ├── commands/            # Command modules
-│   │   ├── menu.js         # Interactive menu
-│   │   ├── list.js         # List issues
-│   │   ├── issue.js        # Create issue
-│   │   ├── branch.js       # Create branch
-│   │   ├── pr.js           # Create PR
-│   │   └── label.js        # Create label
-│   ├── utils/               # Utility functions
-│   │   ├── git.js          # Git operations
-│   │   ├── github.js       # GitHub CLI integration
-│   │   ├── validator.js    # Input validation
-│   │   └── config.js       # Configuration management
-│   └── templates/           # Template handling
-│       └── index.js
-├── .agtrc.json             # Project configuration (optional)
-├── package.json
-└── README.md
-```
+### ❌ 일반적인 오류
 
-## 🔧 Developer Guide
-
-### Local Development
-
-```bash
-# Clone repository
-git clone https://github.com/ljlm0402/auto-github-tool.git
-cd auto-github-tool
-
-# Install dependencies
-npm install
-
-# Test locally
-node bin/agt.js
-
-# Or link globally
-npm link
-agt
-```
-
-### Contributing to the Project
-
-1. **Create an issue**
-   ```bash
-   agt issue
-   ```
-
-2. **Create a branch**
-   ```bash
-   agt branch
-   ```
-
-3. **Make changes and commit**
-   ```bash
-   git add .
-   git commit -m "feat: Add new feature"
-   ```
-
-4. **Create a PR**
-   ```bash
-   agt pr
-   ```
-
-## 🔍 Troubleshooting
-
-### ❌ Common Errors
-
-1. **Not a Git repository**
+1. **Git 저장소가 아닌 경우**
 
    ```
    ❌ This is not a Git repository. Please run 'git init' first.
    ```
 
-   ➡️ Solution: Initialize Git repository with `git init`
+   ➡️ 해결: `git init` 명령어로 Git 저장소 초기화
 
-2. **GitHub CLI authentication error**
+2. **GitHub CLI 인증 오류**
 
    ```
    ❌ GitHub authentication failed. Please run 'gh auth login' first.
    ```
 
-   ➡️ Solution: Re-authenticate with `gh auth login`
+   ➡️ 해결: `gh auth login` 실행하여 재인증
 
-3. **GitHub CLI not installed**
+3. **GitHub CLI 미설치**
 
    ```
    ❌ GitHub CLI is not installed. Please install it: https://cli.github.com/
    ```
 
-   ➡️ Solution: Install with `brew install gh` (macOS) or from the official website
+   ➡️ 해결: `brew install gh` (macOS) 또는 공식 사이트에서 설치
 
-4. **Branch does not exist**
+4. **브랜치가 존재하지 않음**
 
    ```
    ❌ Source branch 'feature/123-...' does not exist
    ```
 
-   ➡️ Solution: Create the branch first with `agt branch`
+   ➡️ 해결: `agt branch`로 브랜치 먼저 생성
 
-5. **No commits**
+5. **커밋이 없는 경우**
    ```
    ❌ No commits found between 'main' and 'feature/123-...'.
    Please commit your changes before creating a PR.
    ```
-   ➡️ Solution: Commit your changes before creating a PR
+   ➡️ 해결: 변경사항을 커밋한 후 PR 생성
 
-## 🤝 Contributing
+## 🤝 기여하기
 
-Contributions are always welcome! Please follow these steps:
+기여는 언제나 환영합니다! 다음 단계를 따라주세요:
 
-1. Fork this repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Create a Pull Request
+1. 이 저장소를 Fork 합니다
+2. Feature 브랜치를 생성합니다 (`git checkout -b feature/amazing-feature`)
+3. 변경사항을 커밋합니다 (`git commit -m 'Add some amazing feature'`)
+4. 브랜치에 Push 합니다 (`git push origin feature/amazing-feature`)
+5. Pull Request를 생성합니다
 
-Or you can automate your workflow using `agt`! 😉
+또는 `agt`를 사용해서 워크플로우를 자동화할 수 있습니다! 😉
 
-## 📄 License
+## 라이선스
 
-This project is licensed under the MIT License.
+이 프로젝트는 MIT 라이선스를 따릅니다.
+
+---
+
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/ljlm0402">AGUMON</a> 🦖
+</p>

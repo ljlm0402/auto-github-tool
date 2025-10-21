@@ -1,0 +1,28 @@
+{
+  "defaultBaseBranch": "main",
+  "branchTypes": [
+    {
+      "id": "1",
+      "name": "feature",
+      "description": "Develop new features"
+    },
+    {
+      "id": "2",
+      "name": "bugfix",
+      "description": "Fix bugs"
+    },
+    {
+      "id": "3",
+      "name": "hotfix",
+      "description": "Urgent fixes"
+    },
+    {
+      "id": "4",
+      "name": "release",
+      "description": "Prepare for a release"
+    }
+  ],
+  "autoAssign": true,
+  "defaultLabels": [],
+  "autoTemplates": true
+}
