@@ -1,0 +1,29 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # e.g., v1.2.3
+
+jobs:
+  publish:
+    name: Publish Package
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout source code
+        uses: actions/checkout@v4
+
+      - name: ⎔ Setup nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org/"
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: 🚀 Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
