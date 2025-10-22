@@ -1,61 +1,142 @@
 const fs = require("fs");
 const path = require("path");
-const readlineSync = require("readline-sync");
+const inquirer = require("inquirer");
 
 /**
  * 이슈 템플릿 질문 매핑
  */
 const ISSUE_TEMPLATE_QUESTIONS = {
-  "bug_report.md": {
-    Description: "🐞 Describe the bug clearly: ",
-    Expected: "✅ What did you expect to happen?: ",
-    Actual: "What actually happened?: ",
-    OS: "💻 What operating system are you using? (e.g., Windows, macOS, Linux): ",
-    NodeVersion: "🛠 Enter your Node.js version (e.g., 16.x): ",
-    PackageManagerVersion: "📦 Enter your NPM/Yarn version (e.g., 8.x): ",
-    Dependencies: "🔗 List any other relevant dependencies (optional): ",
-    Additional: "📎 Add any additional context (optional): ",
-  },
-  "feature_request.md": {
-    Motivation:
-      "❓ Explain why this feature is needed and what problem it solves: ",
-    Solution: "💡 Describe the proposed solution: ",
-    Alternatives: "🔄 What alternatives have you considered?: ",
-    Additional:
-      "📎 Add any other relevant information or references (optional): ",
-  },
-  "question.md": {
-    Summary: "❓ Summarize your question: ",
-    Additional: "📎 Add any other relevant information (optional): ",
-  },
+  "bug_report.md": [
+    {
+      type: "input",
+      name: "Description",
+      message: "🐞 Describe the bug clearly:",
+      validate: (input) => input.trim() !== "" || "This field is required",
+    },
+    {
+      type: "input",
+      name: "Expected",
+      message: "✅ What did you expect to happen?:",
+      validate: (input) => input.trim() !== "" || "This field is required",
+    },
+    {
+      type: "input",
+      name: "Actual",
+      message: "What actually happened?:",
+    },
+    {
+      type: "input",
+      name: "OS",
+      message:
+        "💻 What operating system are you using? (e.g., Windows, macOS, Linux):",
+    },
+    {
+      type: "input",
+      name: "NodeVersion",
+      message: "🛠 Enter your Node.js version (e.g., 16.x):",
+    },
+    {
+      type: "input",
+      name: "PackageManagerVersion",
+      message: "📦 Enter your NPM/Yarn version (e.g., 8.x):",
+    },
+    {
+      type: "input",
+      name: "Dependencies",
+      message: "🔗 List any other relevant dependencies (optional):",
+    },
+    {
+      type: "input",
+      name: "Additional",
+      message: "📎 Add any additional context (optional):",
+    },
+  ],
+  "feature_request.md": [
+    {
+      type: "input",
+      name: "Motivation",
+      message:
+        "❓ Explain why this feature is needed and what problem it solves:",
+      validate: (input) => input.trim() !== "" || "This field is required",
+    },
+    {
+      type: "input",
+      name: "Solution",
+      message: "💡 Describe the proposed solution:",
+      validate: (input) => input.trim() !== "" || "This field is required",
+    },
+    {
+      type: "input",
+      name: "Alternatives",
+      message: "🔄 What alternatives have you considered?:",
+    },
+    {
+      type: "input",
+      name: "Additional",
+      message:
+        "📎 Add any other relevant information or references (optional):",
+    },
+  ],
+  "question.md": [
+    {
+      type: "input",
+      name: "Summary",
+      message: "❓ Summarize your question:",
+      validate: (input) => input.trim() !== "" || "This field is required",
+    },
+    {
+      type: "input",
+      name: "Additional",
+      message: "📎 Add any other relevant information (optional):",
+    },
+  ],
 };
 
 /**
  * PR 템플릿 질문 매핑
  */
-const PR_TEMPLATE_QUESTIONS = {
-  Summary: "📌 Provide a short summary of your changes: ",
-  Issue: "🔍 Enter the related issue number (e.g., #27): ",
-  Changes: "✨ Describe the major changes in your PR: ",
-  Test: "✅ Have you tested the changes locally? (yes/no): ",
-  Guidelines:
-    "📏 Does your code follow the project's style guidelines? (yes/no): ",
-  Documentation:
-    "📖 Have you updated the documentation if necessary? (yes/no): ",
-  Additional: "🔗 Add any additional information (optional): ",
-};
-
-/**
- * 템플릿의 placeholder를 사용자 입력으로 치환
- */
-async function replacePlaceholders(template, questions) {
-  for (const key in questions) {
-    const prompt = questions[key];
-    const answer = readlineSync.question(prompt);
-    template = template.replace(new RegExp(`{{\\s*${key}\\s*}}`, "g"), answer);
-  }
-  return template;
-}
+const PR_TEMPLATE_QUESTIONS = [
+  {
+    type: "input",
+    name: "Summary",
+    message: "📌 Provide a short summary of your changes:",
+    validate: (input) => input.trim() !== "" || "This field is required",
+  },
+  {
+    type: "input",
+    name: "Issue",
+    message: "🔍 Enter the related issue number (e.g., #27):",
+  },
+  {
+    type: "input",
+    name: "Changes",
+    message: "✨ Describe the major changes in your PR:",
+    validate: (input) => input.trim() !== "" || "This field is required",
+  },
+  {
+    type: "confirm",
+    name: "Test",
+    message: "✅ Have you tested the changes locally?",
+    default: true,
+  },
+  {
+    type: "confirm",
+    name: "Guidelines",
+    message: "📏 Does your code follow the project's style guidelines?",
+    default: true,
+  },
+  {
+    type: "confirm",
+    name: "Documentation",
+    message: "📖 Have you updated the documentation if necessary?",
+    default: true,
+  },
+  {
+    type: "input",
+    name: "Additional",
+    message: "🔗 Add any additional information (optional):",
+  },
+];
 
 /**
  * 이슈 템플릿 가져오기
@@ -75,31 +156,49 @@ async function fetchIssueTemplate() {
   }
 
   console.log("\n📌 Available Issue Templates:");
-  files.forEach((file, index) => console.log(`${index + 1}. ${file}`));
 
-  const choice = readlineSync.question(
-    "\nSelect a template number or press Enter to skip: "
-  );
+  const { useTemplate } = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "useTemplate",
+      message: "Would you like to use a template?",
+      default: true,
+    },
+  ]);
 
-  if (!choice.trim()) {
+  if (!useTemplate) {
     return "";
   }
 
-  const templateChoice = parseInt(choice) - 1;
-
-  if (!files[templateChoice]) {
-    console.log("⚠️  Invalid template selection, skipping...");
-    return "";
-  }
+  const { templateChoice } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "templateChoice",
+      message: "Select a template:",
+      choices: files.map((file, index) => ({
+        name: file,
+        value: index,
+      })),
+    },
+  ]);
 
   let template = fs.readFileSync(
     path.join(templateDir, files[templateChoice]),
     "utf-8"
   );
-  const questions = ISSUE_TEMPLATE_QUESTIONS[files[templateChoice]] || {};
 
-  if (Object.keys(questions).length > 0) {
-    template = await replacePlaceholders(template, questions);
+  const questions = ISSUE_TEMPLATE_QUESTIONS[files[templateChoice]];
+
+  if (questions && questions.length > 0) {
+    const answers = await inquirer.prompt(questions);
+
+    // Replace placeholders in template
+    for (const [key, value] of Object.entries(answers)) {
+      template = template.replace(
+        new RegExp(`{{\\s*${key}\\s*}}`, "g"),
+        value || ""
+      );
+    }
   }
 
   return template;
@@ -116,38 +215,33 @@ async function fetchPRTemplate(fetchOpenIssuesCallback) {
   }
 
   let template = fs.readFileSync(templatePath, "utf-8");
-  const answers = {};
 
-  for (const [key, question] of Object.entries(PR_TEMPLATE_QUESTIONS)) {
-    let answer;
+  // 이슈 목록 표시 (있는 경우)
+  if (fetchOpenIssuesCallback) {
+    fetchOpenIssuesCallback();
+  }
 
-    if (key === "Issue") {
-      // 이슈 목록 표시
-      if (fetchOpenIssuesCallback) {
-        fetchOpenIssuesCallback();
-      }
+  // 모든 질문을 inquirer로 비동기 처리
+  const answers = await inquirer.prompt(PR_TEMPLATE_QUESTIONS);
 
-      answer = readlineSync.question(question).trim();
-      const issueNumbers = answer
-        .split(",")
-        .map((num) => num.trim())
-        .filter((num) => num !== "")
-        .map((num) => `- #${num}`)
-        .join("\n");
+  // Issue 필드 처리 (쉼표로 구분된 이슈 번호들)
+  if (answers.Issue) {
+    const issueNumbers = answers.Issue.split(",")
+      .map((num) => num.trim())
+      .filter((num) => num !== "")
+      .map((num) => `- #${num.replace("#", "")}`)
+      .join("\n");
+    answers.Issue = issueNumbers;
+  }
 
-      answers[key] = issueNumbers;
-    } else if (["Test", "Guidelines", "Documentation"].includes(key)) {
-      answer =
-        readlineSync.question(question).toLowerCase() === "yes" ? "x" : " ";
-      answers[key] = answer;
-    } else {
-      answers[key] = readlineSync.question(question).trim();
-    }
+  // 체크박스 필드 처리
+  answers.Test = answers.Test ? "x" : " ";
+  answers.Guidelines = answers.Guidelines ? "x" : " ";
+  answers.Documentation = answers.Documentation ? "x" : " ";
 
-    template = template.replace(
-      new RegExp(`{{ ${key} }}`, "g"),
-      answers[key] || ""
-    );
+  // Replace placeholders in template
+  for (const [key, value] of Object.entries(answers)) {
+    template = template.replace(new RegExp(`{{ ${key} }}`, "g"), value || "");
   }
 
   return template;

@@ -1,4 +1,7 @@
 const { executeCommand } = require("./git");
+const cache = require("./cache");
+const logger = require("./logger");
+const { CACHE_TTL } = require("../constants");
 
 /**
  * GitHub CLI가 설치되어 있는지 확인
@@ -28,10 +31,20 @@ function getCurrentUser() {
 }
 
 /**
- * GitHub 저장소에서 라벨 목록을 가져옴
+ * GitHub 저장소에서 라벨 목록을 가져옴 (캐싱 적용)
  */
 function fetchLabels() {
+  const cacheKey = "github:labels";
+
+  // 캐시된 값 확인
+  const cached = cache.get(cacheKey);
+  if (cached) {
+    logger.debug("Using cached labels");
+    return cached;
+  }
+
   try {
+    logger.debug("Fetching labels from GitHub");
     const labels = executeCommand("gh", [
       "label",
       "list",
@@ -43,18 +56,34 @@ function fetchLabels() {
     if (!labels.trim()) {
       return [];
     }
-    return labels.split("\n").map((label) => label.trim());
+    const labelList = labels.split("\n").map((label) => label.trim());
+
+    // 캐시에 저장 (5분)
+    cache.set(cacheKey, labelList, CACHE_TTL.LABELS);
+
+    return labelList;
   } catch (error) {
+    logger.error("Failed to fetch labels", { error: error.message });
     console.error("❌ Failed to fetch labels:", error.message);
     return [];
   }
 }
 
 /**
- * 오픈된 GitHub 이슈 목록 조회
+ * 오픈된 GitHub 이슈 목록 조회 (캐싱 적용)
  */
 function fetchOpenIssues() {
+  const cacheKey = "github:openIssues";
+
+  // 캐시된 값 확인 (이슈는 자주 변경되므로 1분만 캐싱)
+  const cached = cache.get(cacheKey);
+  if (cached) {
+    logger.debug("Using cached open issues");
+    return cached;
+  }
+
   try {
+    logger.debug("Fetching open issues from GitHub");
     const issues = executeCommand("gh", [
       "issue",
       "list",
@@ -68,12 +97,66 @@ function fetchOpenIssues() {
     if (!issues.trim()) {
       return [];
     }
-    return issues.split("\n").map((line) => {
+    const issueList = issues.split("\n").map((line) => {
       const [number, title, label] = line.split("\t");
       return { number, title, label: label || "none" };
     });
+
+    // 캐시에 저장 (1분)
+    cache.set(cacheKey, issueList, CACHE_TTL.ISSUES);
+
+    return issueList;
   } catch (error) {
+    logger.error("Failed to fetch open issues", { error: error.message });
     throw new Error("❌ Unable to fetch open issues: " + error.message);
+  }
+}
+
+/**
+ * 오픈된 GitHub PR 목록 조회 (캐싱 적용)
+ */
+function fetchOpenPRs() {
+  const cacheKey = "github:openPRs";
+
+  // 캐시된 값 확인 (PR은 자주 변경되므로 1분만 캐싱)
+  const cached = cache.get(cacheKey);
+  if (cached) {
+    logger.debug("Using cached open PRs");
+    return cached;
+  }
+
+  try {
+    logger.debug("Fetching open PRs from GitHub");
+    const prs = executeCommand("gh", [
+      "pr",
+      "list",
+      "--state",
+      "open",
+      "--json",
+      "number,title,headRefName,isDraft",
+      "-q",
+      ".[] | [.number, .title, .headRefName, .isDraft] | @tsv",
+    ]);
+    if (!prs.trim()) {
+      return [];
+    }
+    const prList = prs.split("\n").map((line) => {
+      const [number, title, branch, isDraft] = line.split("\t");
+      return {
+        number,
+        title,
+        branch,
+        isDraft: isDraft === "true",
+      };
+    });
+
+    // 캐시에 저장 (1분)
+    cache.set(cacheKey, prList, CACHE_TTL.PULL_REQUESTS);
+
+    return prList;
+  } catch (error) {
+    logger.error("Failed to fetch open PRs", { error: error.message });
+    throw new Error("❌ Unable to fetch open PRs: " + error.message);
   }
 }
 
@@ -100,7 +183,8 @@ function createPullRequest(
   reviewers,
   assignees,
   labels,
-  milestone
+  milestone,
+  isDraft = false
 ) {
   const args = [
     "pr",
@@ -118,6 +202,7 @@ function createPullRequest(
   if (assignees) args.push("--assignee", assignees);
   if (labels && labels.length) args.push("--label", labels.join(","));
   if (milestone) args.push("--milestone", milestone);
+  if (isDraft) args.push("--draft");
 
   return executeCommand("gh", args);
 }
@@ -137,6 +222,7 @@ module.exports = {
   getCurrentUser,
   fetchLabels,
   fetchOpenIssues,
+  fetchOpenPRs,
   createIssue,
   createPullRequest,
   createLabel,

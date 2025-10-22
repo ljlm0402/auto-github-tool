@@ -15,6 +15,9 @@ const issueCommand = require("../src/commands/issue");
 const branchCommand = require("../src/commands/branch");
 const prCommand = require("../src/commands/pr");
 const labelCommand = require("../src/commands/label");
+const searchCommand = require("../src/commands/search");
+const statsCommand = require("../src/commands/stats");
+const setupCommand = require("../src/commands/setup");
 const { interactiveMode, showHelp } = require("../src/commands/menu");
 const { initConfig } = require("../src/utils/config");
 
@@ -22,6 +25,9 @@ const { initConfig } = require("../src/utils/config");
 const commands = {
   help: showHelp,
   list: listCommand,
+  search: searchCommand,
+  stats: statsCommand,
+  setup: setupCommand,
   issue: issueCommand,
   branch: branchCommand,
   pr: prCommand,
@@ -39,7 +45,7 @@ async function main() {
   // 명령어가 없으면 대화형 모드 실행
   if (!command) {
     await interactiveMode();
-    return;
+    process.exit(0);
   }
 
   // 명령어 실행
@@ -47,11 +53,13 @@ async function main() {
 
   if (commandFunction) {
     await commandFunction();
+    process.exit(0);
   } else {
     console.log(`❌ Unknown command: '${command}'`);
     console.log(
       "💡 Use 'agt help' to see available commands or run 'agt' for interactive mode.\n"
     );
+    process.exit(1);
   }
 }
 

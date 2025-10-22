@@ -5,6 +5,9 @@ const issueCommand = require("./issue");
 const branchCommand = require("./branch");
 const prCommand = require("./pr");
 const labelCommand = require("./label");
+const searchCommand = require("./search");
+const statsCommand = require("./stats");
+const setupCommand = require("./setup");
 const { initConfig } = require("../utils/config");
 
 /**
@@ -26,6 +29,15 @@ async function showMainMenu() {
           value: "list",
         },
         {
+          name: "🔍 Search issues/PRs",
+          value: "search",
+        },
+        {
+          name: "📊 View repository statistics",
+          value: "stats",
+        },
+        new inquirer.Separator(),
+        {
           name: "➕ Create a new issue",
           value: "issue",
         },
@@ -43,6 +55,10 @@ async function showMainMenu() {
         },
         new inquirer.Separator(),
         {
+          name: "🎉 Run setup wizard",
+          value: "setup",
+        },
+        {
           name: "⚙️  Configure AGT settings",
           value: "config",
         },
@@ -56,7 +72,7 @@ async function showMainMenu() {
           value: "exit",
         },
       ],
-      pageSize: 15,
+      pageSize: 20,
     },
   ]);
 
@@ -115,7 +131,12 @@ function showHelp() {
   console.log(chalk.bold("Commands:"));
   console.log("  " + chalk.cyan("(no command)") + "    Start interactive menu");
   console.log("  " + chalk.cyan("help") + "            Show this help message");
+  console.log("  " + chalk.cyan("setup") + "           Run setup wizard");
   console.log("  " + chalk.cyan("list") + "            Show open issues");
+  console.log("  " + chalk.cyan("search") + "          Search issues/PRs");
+  console.log(
+    "  " + chalk.cyan("stats") + "           View repository statistics"
+  );
   console.log("  " + chalk.cyan("issue") + "           Create a new issue");
   console.log(
     "  " + chalk.cyan("branch") + "          Create a branch from an issue"
@@ -136,6 +157,9 @@ function showHelp() {
   console.log(
     chalk.gray("  $ agt              ") +
       "  # Interactive mode (recommended for beginners)"
+  );
+  console.log(
+    chalk.gray("  $ agt setup        ") + "  # Run setup wizard (first time)"
   );
   console.log(chalk.gray("  $ agt list         ") + "  # View open issues");
   console.log(
@@ -172,6 +196,15 @@ async function interactiveMode() {
       case "list":
         await listCommand();
         break;
+      case "search":
+        await searchCommand();
+        break;
+      case "stats":
+        await statsCommand();
+        break;
+      case "setup":
+        await setupCommand();
+        break;
       case "issue":
         await issueCommand();
         break;
@@ -192,8 +225,7 @@ async function interactiveMode() {
         break;
       case "exit":
         console.log(chalk.green("\n👋 Thanks for using AGT! Goodbye!\n"));
-        shouldContinue = false;
-        continue;
+        process.exit(0);
     }
 
     if (shouldContinue && action !== "help" && action !== "config") {

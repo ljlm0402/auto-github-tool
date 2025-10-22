@@ -46,11 +46,10 @@
 </p>
 
 <p align="center">
-  <a href="./README.ko.md">한국어</a> •
-  <a href="./README.md">English</a>
+  <strong>· English <a href="./README.ko.md">· Korean</a></strong>
 </p>
 
-<br />
+---
 
 ## Introduction
 
@@ -64,23 +63,32 @@ AGT (Auto GitHub Tool) is a CLI tool that automates branch management and pull r
 - **🔀 PR Creation**: Automatically create pull requests using templates
 - **🏷️ Label Management**: Create and manage GitHub labels
 - **⚙️ Configuration File**: Support for project-specific or global settings (.agtrc.json)
+- **🪄 Setup Wizard**: Interactive 5-step setup wizard for easy first-time configuration
 - **🎨 Enhanced UX**: Better user experience with colored output, spinners, and input validation
+- **📊 Logging System**: Comprehensive logging to `~/.agt/agt.log` for debugging and tracking
+- **⚡ Smart Caching**: Automatic caching of GitHub API responses for improved performance
+- **🔄 Error Recovery**: Unified error handling system with automatic retry mechanism
+- **✅ Input Validation**: Multi-layer security validation to prevent shell injection
+- **📈 Performance**: Parallel API operations for 50-75% faster command execution
 
 ## 📋 Table of Contents
 
 - [Requirements](#-requirements)
 - [Installation](#-installation)
+- [Quick Start](#-quick-start)
 - [Usage](#-usage)
   - [Interactive Mode](#interactive-mode-recommended)
   - [Direct Commands](#direct-commands)
   - [Configuration File](#configuration-file)
 - [Command Guide](#-command-guide)
-  - [Help](#1-help)
-  - [List Issues](#2-list-issues)
-  - [Create Issue](#3-create-issue)
-  - [Create Branch](#4-create-branch)
-  - [Create Pull Request](#5-create-pull-request)
-  - [Create Label](#6-create-label)
+  - [Setup Wizard](#1-setup-wizard)
+  - [Help](#2-help)
+  - [List Issues](#3-list-issues)
+  - [Create Issue](#4-create-issue)
+  - [Create Branch](#5-create-branch)
+  - [Create Pull Request](#6-create-pull-request)
+  - [Create Label](#7-create-label)
+  - [Statistics](#8-statistics)
 - [Project Structure](#-project-structure)
 - [Developer Guide](#-developer-guide)
 - [Troubleshooting](#-troubleshooting)
@@ -133,6 +141,58 @@ gh --version  # Check installation
 
    After installation, you can use the `agt` command.
 
+## 🚀 Quick Start
+
+The easiest way to get started with AGT is using the setup wizard:
+
+```bash
+$ agt setup
+
+╔════════════════════════════════════════════════╗
+║          🚀 AGT Setup Wizard                  ║
+╚════════════════════════════════════════════════╝
+
+This wizard will help you configure AGT for the first time.
+It will check your environment and guide you through the setup.
+
+✅ Step 1: Checking Git Installation
+   ✓ Git is installed (version 2.39.0)
+
+✅ Step 2: Checking GitHub CLI Installation
+   ✓ GitHub CLI is installed (version 2.40.0)
+
+✅ Step 3: Verifying GitHub Authentication
+   ✓ Authenticated as yourusername
+
+✅ Step 4: Testing GitHub Connection
+   ✓ Successfully connected to GitHub API
+
+⚙️  Step 5: AGT Configuration (Optional)
+   ? Where would you like to store the configuration?
+   ❯ 📁 Local (current project only)
+     🌍 Global (all projects)
+     ⏭️  Skip for now
+
+╔════════════════════════════════════════════════╗
+║            Setup Summary                      ║
+╚════════════════════════════════════════════════╝
+
+✅ PASS  Git installation
+✅ PASS  GitHub CLI installation
+✅ PASS  GitHub authentication
+✅ PASS  GitHub connection
+⏭️  SKIP  AGT configuration
+
+🎉 Setup completed successfully!
+
+You're ready to use Auto GitHub Tool!
+
+Quick Start:
+  • Run 'agt' to start interactive mode
+  • Run 'agt help' to see all commands
+  • Run 'agt list' to view open issues
+```
+
 ## 🛠 Usage
 
 ### Interactive Mode (Recommended)
@@ -165,11 +225,13 @@ You can directly execute specific tasks by entering commands:
 
 ```bash
 agt help      # Show available commands
+agt setup     # Run setup wizard (first-time users)
 agt list      # View open issues
 agt issue     # Create a new issue
 agt branch    # Create a branch from an issue
 agt pr        # Create a PR from current branch
 agt label     # Create a label
+agt stats     # Show repository statistics
 agt config    # Initialize configuration
 ```
 
@@ -220,7 +282,47 @@ cp .agtrc.example.json .agtrc.json
 
 ## 📚 Command Guide
 
-### 1. Help
+### 1. Setup Wizard
+
+Interactive setup wizard to help you configure AGT for the first time.
+
+```bash
+$ agt setup
+
+╔════════════════════════════════════════════════╗
+║          🚀 AGT Setup Wizard                  ║
+╚════════════════════════════════════════════════╝
+
+This wizard will check:
+  ✓ Git installation
+  ✓ GitHub CLI installation
+  ✓ GitHub authentication
+  ✓ GitHub connection
+  ⚙️  AGT configuration (optional)
+
+Run this command when:
+  • First time using AGT
+  • After reinstalling dependencies
+  • Having authentication issues
+  • Want to reconfigure AGT
+```
+
+**What it does:**
+
+1. **Git Check**: Verifies Git is installed and accessible
+2. **GitHub CLI Check**: Verifies GitHub CLI (gh) is installed
+3. **Authentication**: Checks if you're authenticated with GitHub
+4. **Connection Test**: Tests GitHub API connectivity
+5. **Configuration**: Optionally create local or global config (can be skipped)
+
+**Features:**
+
+- ✅ Sequential validation with helpful error messages
+- 🔄 Interactive recovery options for failed steps
+- ⏭️ Skip configuration if you prefer default settings
+- 📊 Detailed summary at the end
+
+### 2. Help
 
 ```bash
 $ agt help
@@ -234,12 +336,14 @@ Usage:
 
 Commands:
   (no command)    Start interactive menu
+  setup           Run setup wizard (recommended for first-time users)
   help            Show this help message
   list            Show open issues
   issue           Create a new issue
   branch          Create a branch from an issue
   pr              Create a pull request
   label           Create a new label
+  stats           Show repository statistics
   config          Configure AGT settings
 
 Configuration Files:
@@ -248,11 +352,12 @@ Configuration Files:
 
 Quick Start:
   $ agt                # Interactive mode (recommended for beginners)
+  $ agt setup          # First-time setup wizard
   $ agt list           # View open issues
   $ agt config         # Initialize configuration
 ```
 
-### 2. List Issues
+### 3. List Issues
 
 View all open issues in the current repository.
 
@@ -266,7 +371,7 @@ $ agt list
 125 Update documentation [documentation]
 ```
 
-### 3. Create Issue
+### 4. Create Issue
 
 Create issues using templates.
 
@@ -303,7 +408,7 @@ Select a template number or press Enter to skip: 1
 ✅ GitHub issue created successfully.
 ```
 
-### 4. Create Branch
+### 5. Create Branch
 
 Automatically create a branch by selecting an issue number.
 
@@ -331,7 +436,7 @@ $ agt branch
 ✅ Branch 'bugfix/123-fix-login-bug' has been successfully created.
 ```
 
-### 5. Create Pull Request
+### 6. Create Pull Request
 
 Automatically create a PR from the current branch. Supports templates and can automatically link related issues.
 
@@ -379,7 +484,7 @@ Found 3 commit(s) to push.
 ✅ Pull request created successfully.
 ```
 
-### 6. Create Label
+### 7. Create Label
 
 Create a new label in the GitHub repository.
 
@@ -394,51 +499,59 @@ $ agt label
 ✅ Label 'urgent' has been successfully created.
 ```
 
-## 📁 Project Structure
+### 8. Statistics
 
-```
-auto-github-tool/
-├── bin/
-│   └── agt.js               # CLI entry point and main logic
-├── src/
-│   ├── commands/            # Command modules
-│   │   ├── menu.js         # Interactive menu
-│   │   ├── list.js         # List issues
-│   │   ├── issue.js        # Create issue
-│   │   ├── branch.js       # Create branch
-│   │   ├── pr.js           # Create PR
-│   │   └── label.js        # Create label
-│   ├── utils/               # Utility functions
-│   │   ├── git.js          # Git operations
-│   │   ├── github.js       # GitHub CLI integration
-│   │   ├── validator.js    # Input validation
-│   │   └── config.js       # Configuration management
-│   └── templates/           # Template handling
-│       └── index.js
-├── .agtrc.json             # Project configuration (optional)
-├── package.json
-└── README.md
-```
-
-## 🔧 Developer Guide
-
-### Local Development
+Display comprehensive repository statistics and insights.
 
 ```bash
-# Clone repository
-git clone https://github.com/ljlm0402/auto-github-tool.git
-cd auto-github-tool
+$ agt stats
 
-# Install dependencies
-npm install
+╔════════════════════════════════════════════════╗
+║       📊 Repository Statistics                ║
+╚════════════════════════════════════════════════╝
 
-# Test locally
-node bin/agt.js
+Repository: ljlm0402/auto-github-tool
 
-# Or link globally
-npm link
-agt
+📈 Overview
+  ⭐ Stars:          42
+  🍴 Forks:          8
+  👁️  Watchers:       5
+  🐛 Open Issues:    3
+  🔓 Open PRs:       1
+
+👥 Contributors
+  Total contributors: 5
+
+  Top Contributors:
+  • ljlm0402         (245 commits)
+  • contributor2     (38 commits)
+  • contributor3     (12 commits)
+
+🏷️  Most Used Labels
+  • bug              (12 issues)
+  • enhancement      (8 issues)
+  • documentation    (5 issues)
+
+📊 Issue Statistics
+  • Total Issues:    45
+  • Open:            3
+  • Closed:          42
+  • Close Rate:      93.3%
+
+🔀 PR Statistics
+  • Total PRs:       38
+  • Open:            1
+  • Merged:          35
+  • Closed:          2
+  • Merge Rate:      94.6%
 ```
+
+**Features:**
+
+- ⚡ **Fast Performance**: Parallel API calls (50-75% faster)
+- 📊 **Comprehensive Data**: Stars, forks, issues, PRs, contributors
+- 🎯 **Smart Caching**: Results cached for 5 minutes
+- 🎨 **Beautiful Output**: Colored and formatted display
 
 ### Contributing to the Project
 
@@ -466,6 +579,40 @@ agt
    agt pr
    ```
 
+## 👀 Debug Mode
+
+AGT includes a comprehensive debug mode for troubleshooting issues. When enabled, it shows detailed logs in the console and records them to `~/.agt/agt.log`.
+
+### Enable Debug Mode
+
+```bash
+# Set environment variable
+AGT_DEBUG=true agt branch
+
+# Or use the --debug flag
+agt branch --debug
+```
+
+### View Logs
+
+```bash
+# View log file location
+ls ~/.agt/
+
+# Tail logs in real-time
+tail -f ~/.agt/agt.log
+
+# Search logs (macOS/Linux)
+grep "ERROR" ~/.agt/agt.log
+```
+
+### Log Levels
+
+- **INFO**: General information about operations
+- **DEBUG**: Detailed debugging information
+- **WARN**: Warning messages
+- **ERROR**: Error messages with stack traces
+
 ## 🔍 Troubleshooting
 
 ### ❌ Common Errors
@@ -484,7 +631,7 @@ agt
    ❌ GitHub authentication failed. Please run 'gh auth login' first.
    ```
 
-   ➡️ Solution: Re-authenticate with `gh auth login`
+   ➡️ Solution: Re-authenticate with `gh auth login` or run `agt setup`
 
 3. **GitHub CLI not installed**
 
@@ -494,7 +641,15 @@ agt
 
    ➡️ Solution: Install with `brew install gh` (macOS) or from the official website
 
-4. **Branch does not exist**
+4. **Network errors**
+
+   ```
+   ❌ Network error: Please check your internet connection and try again.
+   ```
+
+   ➡️ Solution: AGT automatically retries network operations up to 3 times. If the error persists, check your internet connection
+
+5. **Branch does not exist**
 
    ```
    ❌ Source branch 'feature/123-...' does not exist
@@ -502,28 +657,37 @@ agt
 
    ➡️ Solution: Create the branch first with `agt branch`
 
-5. **No commits**
+6. **No commits**
+
    ```
    ❌ No commits found between 'main' and 'feature/123-...'.
    Please commit your changes before creating a PR.
    ```
+
    ➡️ Solution: Commit your changes before creating a PR
+
+7. **Invalid branch name**
+   ```
+   ❌ Invalid branch name: Branch names cannot contain shell special characters
+   ```
+   ➡️ Solution: AGT automatically sanitizes branch names. If you see this error, the issue title may contain forbidden characters
+
+### 🆘 Getting Help
+
+If you're still experiencing issues:
+
+1. **Run setup wizard**: `agt setup` to verify your environment
+2. **Enable debug mode**: `AGT_DEBUG=true agt <command>` for detailed logs
+3. **Check logs**: View `~/.agt/agt.log` for error details
+4. **Report issue**: Create an issue on GitHub with the error message and logs
 
 ## 🤝 Contributing
 
-Contributions are always welcome! Please follow these steps:
+Contributions are always welcome! Please feel free to open an issue or submit a pull request.
 
-1. Fork this repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Create a Pull Request
+## 💳 License
 
-Or you can automate your workflow using `agt`! 😉
-
-## 📄 License
-
-This project is licensed under the MIT License.
+[MIT](LICENSE)
 
 ---
 

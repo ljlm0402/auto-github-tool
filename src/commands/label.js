@@ -1,4 +1,4 @@
-const readlineSync = require("readline-sync");
+const inquirer = require("inquirer");
 const chalk = require("chalk");
 const ora = require("ora");
 const { validateGitHubCLI, createLabel } = require("../utils/github");
@@ -8,50 +8,83 @@ const {
   validateHexColor,
   handleError,
 } = require("../utils/validator");
+const logger = require("../utils/logger");
 
 /**
  * GitHub 라벨 생성
  */
 async function labelCommand() {
+  const spinner = ora();
+
   try {
+    spinner.start("Validating environment...");
     validateGitRepository();
     validateGitHubCLI();
+    spinner.succeed("Environment validated");
 
-    // 1. 라벨 이름 입력
-    console.log("");
-    const labelName = validateNotEmpty(
-      readlineSync.question(chalk.cyan("🏷 Enter label name: ")),
-      "Label name"
-    );
+    // 1. 라벨 정보 입력
+    const answers = await inquirer.prompt([
+      {
+        type: "input",
+        name: "labelName",
+        message: "🏷 Enter label name:",
+        validate: (input) => {
+          return input.trim() !== "" || "Label name cannot be empty";
+        },
+      },
+      {
+        type: "input",
+        name: "labelColor",
+        message: "🎨 Enter label color (6-digit hex, e.g., FFFFFF):",
+        default: "FFFFFF",
+        validate: (input) => {
+          try {
+            validateHexColor(input);
+            return true;
+          } catch (error) {
+            return error.message;
+          }
+        },
+      },
+      {
+        type: "input",
+        name: "labelDescription",
+        message: "📝 Enter label description (optional):",
+      },
+    ]);
 
-    // 2. 색상 입력
-    const colorInput = readlineSync.question(
-      chalk.cyan(
-        "🎨 Enter label color (6-digit hex, e.g., FFFFFF) [default: FFFFFF]: "
-      )
-    );
-    const labelColor = validateHexColor(colorInput);
+    const { labelName, labelColor, labelDescription } = answers;
+    const validatedColor = validateHexColor(labelColor);
 
-    // 3. 설명 입력
-    const labelDescription = readlineSync.question(
-      chalk.cyan("📝 Enter label description (optional): ")
-    );
+    logger.info("Creating label", {
+      name: labelName,
+      color: validatedColor,
+      description: labelDescription,
+    });
 
-    // 4. 라벨 생성
-    const spinner = ora(`Creating label '${labelName}'...`).start();
+    // 2. 라벨 생성
+    spinner.start(`Creating label '${labelName}'...`);
 
     try {
-      const result = createLabel(labelName, labelColor, labelDescription);
+      const result = createLabel(labelName, validatedColor, labelDescription);
       spinner.succeed(
-        chalk.green(`✅ Label '${labelName}' has been successfully created.`)
+        chalk.green(`Label '${labelName}' has been successfully created`)
       );
-      console.log(result);
+
+      logger.info("Label created successfully", { name: labelName });
+
+      console.log(chalk.gray(`\n💡 Color: #${validatedColor}`));
+      if (labelDescription) {
+        console.log(chalk.gray(`💡 Description: ${labelDescription}`));
+      }
       console.log("");
     } catch (error) {
       spinner.fail("Failed to create label");
       throw error;
     }
   } catch (error) {
+    spinner.stop();
+    logger.error("Label command failed", { error: error.message });
     handleError(error, "label command");
   }
 }
