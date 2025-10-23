@@ -1,6 +1,6 @@
 <h1 align="center">
 <br>
-  <img src="https://github.com/user-attachments/assets/3ff372bb-9216-4537-81e9-59d91960b7ce" alt="Project Logo" />
+  <img src="https://github.com/user-attachments/assets/3ff372bb-9216-4537-81e9-59d91960b7ce" width="600" alt="Project Logo" />
   <br>
     <br>
   Auto GitHub Tool

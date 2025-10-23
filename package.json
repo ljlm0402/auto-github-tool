@@ -20,11 +20,15 @@
   "scripts": {
     "start": "node bin/agt.js",
     "help": "node bin/agt.js help",
+    "setup": "node bin/agt.js setup",
     "list": "node bin/agt.js list",
+    "search": "node bin/agt.js search",
+    "stats": "node bin/agt.js stats",
     "issue": "node bin/agt.js issue",
     "branch": "node bin/agt.js branch",
     "pr": "node bin/agt.js pr",
-    "label": "node bin/agt.js label"
+    "label": "node bin/agt.js label",
+    "config": "node bin/agt.js config"
   },
   "dependencies": {
     "chalk": "^4.1.2",
