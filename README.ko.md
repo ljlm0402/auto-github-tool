@@ -46,104 +46,101 @@
 </p>
 
 <p align="center">
-  <strong>· English <a href="./README.ko.md">· Korean</a></strong>
+    <strong><a href="./README.md">English</a> · 한국어</strong>
 </p>
 
 ---
 
-## Introduction
+## AGT 소개
 
-AGT (Auto GitHub Tool) is a CLI tool that automates branch management and pull request creation based on GitHub Issues, improving developer productivity and maintaining consistency in branch management.
+AGT(Auto GitHub Tool)는 GitHub Issue를 기반으로 브랜치 관리와 풀 리퀘스트(PR) 생성을 자동화하여 개발자의 생산성을 향상시키고, 브랜치 관리의 일관성을 유지하는 CLI 도구입니다.
 
-### ✨ Key Features
+### ✨ 주요 기능
 
-- **🎯 Interactive Menu Mode**: Easy access to all features through an intuitive menu
-- **📋 Issue Management**: View issue lists and create issues using templates
-- **🌿 Branch Automation**: Automatically create issue-based branches (feature/bugfix/hotfix/release)
-- **🔀 PR Creation**: Automatically create pull requests using templates
-- **🏷️ Label Management**: Create and manage GitHub labels
-- **⚙️ Configuration File**: Support for project-specific or global settings (.agtrc.json)
-- **🪄 Setup Wizard**: Interactive 5-step setup wizard for easy first-time configuration
-- **🎨 Enhanced UX**: Better user experience with colored output, spinners, and input validation
-- **📊 Logging System**: Comprehensive logging to `~/.agt/agt.log` for debugging and tracking
-- **⚡ Smart Caching**: Automatic caching of GitHub API responses for improved performance
-- **🔄 Error Recovery**: Unified error handling system with automatic retry mechanism
-- **✅ Input Validation**: Multi-layer security validation to prevent shell injection
-- **📈 Performance**: Parallel API operations for 50-75% faster command execution
+- **🎯 대화형 메뉴 모드**: 직관적인 메뉴로 모든 기능에 쉽게 접근
+- **📋 이슈 관리**: 이슈 목록 조회 및 템플릿 기반 이슈 생성
+- **🌿 브랜치 자동화**: 이슈 기반 브랜치 자동 생성 (feature/bugfix/hotfix/release)
+- **🔀 PR 생성**: 템플릿 기반 풀 리퀘스트 자동 생성
+- **🏷️ 라벨 관리**: GitHub 라벨 생성 및 관리
+- **⚙️ 설정 파일**: 프로젝트별 또는 전역 설정 지원 (.agtrc.json)
+- **🪄 설정 마법사**: 첫 사용자를 위한 대화형 5단계 설정 마법사
+- **🎨 향상된 UX**: 컬러 출력, 스피너, 입력 검증으로 더 나은 사용자 경험
+- **📊 로깅 시스템**: 디버깅 및 추적을 위한 `~/.agt/agt.log` 포괄적 로깅
+- **⚡ 스마트 캐싱**: 성능 향상을 위한 GitHub API 응답 자동 캐싱
+- **🔄 에러 복구**: 통합 에러 핸들링 시스템과 자동 재시도 메커니즘
+- **✅ 입력 검증**: 쉘 인젝션 방지를 위한 다층 보안 검증
+- **📈 성능 최적화**: 병렬 API 호출로 50-75% 더 빠른 명령 실행
 
-## 📋 Table of Contents
+## 📋 목차
 
-- [Requirements](#-requirements)
-- [Installation](#-installation)
-- [Quick Start](#-quick-start)
-- [Usage](#-usage)
-  - [Interactive Mode](#interactive-mode-recommended)
-  - [Direct Commands](#direct-commands)
-  - [Configuration File](#configuration-file)
-- [Command Guide](#-command-guide)
-  - [Setup Wizard](#1-setup-wizard)
-  - [Help](#2-help)
-  - [List Issues](#3-list-issues)
-  - [Create Issue](#4-create-issue)
-  - [Create Branch](#5-create-branch)
-  - [Create Pull Request](#6-create-pull-request)
-  - [Create Label](#7-create-label)
-  - [Statistics](#8-statistics)
-- [Project Structure](#-project-structure)
-- [Developer Guide](#-developer-guide)
-- [Troubleshooting](#-troubleshooting)
-- [Contributing](#-contributing)
-- [License](#-license)
+- [요구 사항](#-요구-사항)
+- [설치 및 실행](#-설치-및-실행)
+- [빠른 시작](#-빠른-시작)
+- [사용법](#-사용법)
+  - [대화형 모드](#대화형-모드-권장)
+  - [직접 명령어 사용](#직접-명령어-사용)
+  - [설정 파일](#설정-파일)
+- [명령어 가이드](#-명령어-가이드)
+  - [설정 마법사](#1-설정-마법사)
+  - [도움말](#2-도움말)
+  - [이슈 목록 조회](#3-이슈-목록-조회)
+  - [이슈 생성](#4-이슈-생성)
+  - [브랜치 생성](#5-브랜치-생성)
+  - [Pull Request 생성](#6-pull-request-생성)
+  - [라벨 생성](#7-라벨-생성)
+  - [저장소 통계](#8-저장소-통계)
+- [프로젝트 구조](#-프로젝트-구조)
+- [개발자 가이드](#-개발자-가이드)
+- [문제 해결](#-문제-해결)
+- [기여하기](#-기여하기)
+- [라이선스](#-라이선스)
 
-## 📌 Requirements
+## 📌 요구 사항
 
-- Node.js 14 or higher
-- GitHub CLI (gh) installation required
-- GitHub account
+- Node.js 14 이상
+- GitHub CLI (gh) 설치 필요
+- GitHub 계정이 필요합니다.
 
 ```sh
-node -v # Check version
-gh --version  # Check installation
+node -v # 버전 확인
+gh --version  # 설치 확인
 ```
 
-## 🚀 Installation
+## 🚀 설치 및 실행
 
-1. **Install GitHub CLI**
+1. **GitHub CLI 설치**
 
    ```bash
-   # Install via Homebrew (macOS)
+   # Homebrew를 통한 설치
    brew install gh
-
-   # Other platforms: https://cli.github.com/
    ```
 
-2. **Authenticate GitHub Account**
+2. **GitHub 계정 연동**
 
    ```bash
    gh auth login
    ```
 
-   Follow the prompts:
+   - 프롬프트에 따라 진행:
+     1. `? What account do you want to log into?` → `GitHub.com` 선택
+     2. `? What is your preferred protocol for Git operations?` → `HTTPS` 선택
+     3. `? Authenticate Git with your GitHub credentials?` → `Yes` 선택
+     4. `? How would you like to authenticate GitHub CLI?` → `Login with a web browser` 선택
+     5. 표시된 one-time code를 복사
+     6. 자동으로 열리는 브라우저에서 GitHub 로그인
+     7. 복사한 코드 입력하여 인증 완료
 
-   1. `? What account do you want to log into?` → Select `GitHub.com`
-   2. `? What is your preferred protocol for Git operations?` → Select `HTTPS`
-   3. `? Authenticate Git with your GitHub credentials?` → Select `Yes`
-   4. `? How would you like to authenticate GitHub CLI?` → Select `Login with a web browser`
-   5. Copy the one-time code displayed
-   6. Log in to GitHub in the automatically opened browser
-   7. Enter the copied code to complete authentication
-
-3. **Install AGT**
+3. **AGT 설치**
 
    ```bash
    npm install -g auto-github-tool
    ```
 
-   After installation, you can use the `agt` command.
+   설치 후 `agt` 명령어를 사용하여 실행할 수 있습니다.
 
-## 🚀 Quick Start
+## 🚀 빠른 시작
 
-The easiest way to get started with AGT is using the setup wizard:
+AGT를 시작하는 가장 쉬운 방법은 설정 마법사를 사용하는 것입니다:
 
 ```bash
 $ agt setup
@@ -193,11 +190,11 @@ Quick Start:
   • Run 'agt list' to view open issues
 ```
 
-## 🛠 Usage
+## 🛠 사용법
 
-### Interactive Mode (Recommended)
+### 대화형 모드 (권장)
 
-The easiest way to use AGT. Simply type `agt` without any command to display the interactive menu:
+가장 쉬운 사용 방법입니다. 명령어 없이 `agt`만 입력하면 대화형 메뉴가 표시됩니다:
 
 ```bash
 $ agt
@@ -219,39 +216,39 @@ $ agt
   🚪 Exit
 ```
 
-### Direct Commands
+### 직접 명령어 사용
 
-You can directly execute specific tasks by entering commands:
+특정 작업을 바로 실행하고 싶다면 명령어를 직접 입력할 수 있습니다:
 
 ```bash
-agt help      # Show available commands
-agt setup     # Run setup wizard (first-time users)
-agt list      # View open issues
-agt issue     # Create a new issue
-agt branch    # Create a branch from an issue
-agt pr        # Create a PR from current branch
-agt label     # Create a label
-agt stats     # Show repository statistics
-agt config    # Initialize configuration
+agt help      # 사용 가능한 명령어 목록 출력
+agt setup     # 설정 마법사 실행 (처음 사용하는 경우)
+agt list      # 오픈된 이슈 목록 조회
+agt issue     # 새 이슈 생성
+agt branch    # 선택한 이슈 기반 브랜치 생성
+agt pr        # 현재 브랜치에서 PR 생성
+agt label     # 라벨 생성
+agt stats     # 저장소 통계 보기
+agt config    # 설정 초기화
 ```
 
-### Configuration File
+### 설정 파일
 
-AGT supports project-specific or global configuration.
+AGT는 프로젝트별 또는 전역 설정을 지원합니다.
 
-#### Initialize Configuration
+#### 설정 초기화
 
 ```bash
-# Local project configuration (.agtrc.json)
+# 프로젝트 로컬 설정 (.agtrc.json)
 $ agt config
 
-# Global configuration (~/.agtrc.json)
+# 전역 설정 (~/.agtrc.json)
 $ agt config --global
 ```
 
-#### Configuration File Example (.agtrc.json)
+#### 설정 파일 예시 (.agtrc.json)
 
-The project includes a `.agtrc.example.json` file. Copy it to use:
+프로젝트에 `.agtrc.example.json` 파일이 포함되어 있습니다. 이를 복사해서 사용하세요:
 
 ```bash
 cp .agtrc.example.json .agtrc.json
@@ -272,19 +269,19 @@ cp .agtrc.example.json .agtrc.json
 }
 ```
 
-**Configuration Options:**
+**설정 항목:**
 
-- `defaultBaseBranch`: Default base branch when creating PRs
-- `branchTypes`: Define branch types
-- `autoAssign`: Automatically assign yourself
-- `defaultLabels`: Default labels to apply
-- `autoTemplates`: Automatically use templates
+- `defaultBaseBranch`: PR 생성 시 기본 base 브랜치
+- `branchTypes`: 브랜치 타입 정의
+- `autoAssign`: 자동으로 자신을 assignee로 설정
+- `defaultLabels`: 기본으로 적용할 라벨 목록
+- `autoTemplates`: 템플릿 자동 사용 여부
 
-## 📚 Command Guide
+## 📚 명령어 가이드
 
-### 1. Setup Wizard
+### 1. 설정 마법사
 
-Interactive setup wizard to help you configure AGT for the first time.
+처음 AGT를 설정하는 데 도움을 주는 대화형 설정 마법사입니다.
 
 ```bash
 $ agt setup
@@ -307,22 +304,22 @@ Run this command when:
   • Want to reconfigure AGT
 ```
 
-**What it does:**
+**주요 기능:**
 
-1. **Git Check**: Verifies Git is installed and accessible
-2. **GitHub CLI Check**: Verifies GitHub CLI (gh) is installed
-3. **Authentication**: Checks if you're authenticated with GitHub
-4. **Connection Test**: Tests GitHub API connectivity
-5. **Configuration**: Optionally create local or global config (can be skipped)
+1. **Git 확인**: Git이 설치되어 있고 접근 가능한지 확인
+2. **GitHub CLI 확인**: GitHub CLI (gh)가 설치되어 있는지 확인
+3. **인증 확인**: GitHub 인증 상태 확인
+4. **연결 테스트**: GitHub API 연결 테스트
+5. **설정**: 로컬 또는 전역 설정 파일 생성 (생략 가능)
 
-**Features:**
+**특징:**
 
-- ✅ Sequential validation with helpful error messages
-- 🔄 Interactive recovery options for failed steps
-- ⏭️ Skip configuration if you prefer default settings
-- 📊 Detailed summary at the end
+- ✅ 도움이 되는 오류 메시지와 함께 순차 검증
+- 🔄 실패한 단계에 대한 대화형 복구 옵션
+- ⏭️ 기본 설정을 사용하려면 설정 단계 건너뛰기 가능
+- 📊 마지막에 상세한 요약 제공
 
-### 2. Help
+### 2. 도움말
 
 ```bash
 $ agt help
@@ -357,9 +354,9 @@ Quick Start:
   $ agt config         # Initialize configuration
 ```
 
-### 3. List Issues
+### 3. 이슈 목록 조회
 
-View all open issues in the current repository.
+현재 저장소의 모든 오픈 이슈를 조회합니다.
 
 ```bash
 $ agt list
@@ -371,9 +368,9 @@ $ agt list
 125 Update documentation [documentation]
 ```
 
-### 4. Create Issue
+### 4. 이슈 생성
 
-Create issues using templates.
+템플릿을 활용한 이슈 생성을 지원합니다.
 
 ```bash
 $ agt issue
@@ -408,11 +405,11 @@ Select a template number or press Enter to skip: 1
 ✅ GitHub issue created successfully.
 ```
 
-### 5. Create Branch
+### 5. 브랜치 생성
 
-Automatically create a branch by selecting an issue number.
+이슈 번호를 선택하여 자동으로 브랜치를 생성합니다.
 
-**Branch Naming Convention:** `{type}/{issue-number}-{sanitized-title}`
+**브랜치 명명 규칙:** `{type}/{issue-number}-{sanitized-title}`
 
 ```bash
 $ agt branch
@@ -436,9 +433,9 @@ $ agt branch
 ✅ Branch 'bugfix/123-fix-login-bug' has been successfully created.
 ```
 
-### 6. Create Pull Request
+### 6. Pull Request 생성
 
-Automatically create a PR from the current branch. Supports templates and can automatically link related issues.
+현재 브랜치에서 PR을 자동으로 생성합니다. 템플릿을 지원하며 관련 이슈를 자동으로 연결할 수 있습니다.
 
 ```bash
 $ agt pr
@@ -484,9 +481,9 @@ Found 3 commit(s) to push.
 ✅ Pull request created successfully.
 ```
 
-### 7. Create Label
+### 7. 라벨 생성
 
-Create a new label in the GitHub repository.
+GitHub 저장소에 새로운 라벨을 생성합니다.
 
 ```bash
 $ agt label
@@ -499,9 +496,9 @@ $ agt label
 ✅ Label 'urgent' has been successfully created.
 ```
 
-### 8. Statistics
+### 8. 저장소 통계
 
-Display comprehensive repository statistics and insights.
+저장소의 포괄적인 통계와 인사이트를 표시합니다.
 
 ```bash
 $ agt stats
@@ -546,146 +543,146 @@ Repository: ljlm0402/auto-github-tool
   • Merge Rate:      94.6%
 ```
 
-**Features:**
+**특징:**
 
-- ⚡ **Fast Performance**: Parallel API calls (50-75% faster)
-- 📊 **Comprehensive Data**: Stars, forks, issues, PRs, contributors
-- 🎯 **Smart Caching**: Results cached for 5 minutes
-- 🎨 **Beautiful Output**: Colored and formatted display
+- ⚡ **빠른 성능**: 병렬 API 호출 (50-75% 더 빠름)
+- 📊 **포괄적인 데이터**: Stars, forks, issues, PRs, 기여자
+- 🎯 **스마트 캐싱**: 결과가 5분간 캐시됨
+- 🎨 **아름다운 출력**: 컬러 및 포맷팅된 디스플레이
 
-### Contributing to the Project
+### 프로젝트 기여하기
 
-1. **Create an issue**
+1. **이슈 생성**
 
    ```bash
    agt issue
    ```
 
-2. **Create a branch**
+2. **브랜치 생성**
 
    ```bash
    agt branch
    ```
 
-3. **Make changes and commit**
+3. **변경사항 커밋**
 
    ```bash
    git add .
    git commit -m "feat: Add new feature"
    ```
 
-4. **Create a PR**
+4. **PR 생성**
    ```bash
    agt pr
    ```
 
-## 👀 Debug Mode
+## 👀 디버그 모드
 
-AGT includes a comprehensive debug mode for troubleshooting issues. When enabled, it shows detailed logs in the console and records them to `~/.agt/agt.log`.
+AGT는 문제 해결을 위한 포괄적인 디버그 모드를 포함하고 있습니다. 활성화하면 콘솔에 상세한 로그를 표시하고 `~/.agt/agt.log`에 기록합니다.
 
-### Enable Debug Mode
+### 디버그 모드 활성화
 
 ```bash
-# Set environment variable
+# 환경 변수 설정
 AGT_DEBUG=true agt branch
 
-# Or use the --debug flag
+# 또는 --debug 플래그 사용
 agt branch --debug
 ```
 
-### View Logs
+### 로그 확인
 
 ```bash
-# View log file location
+# 로그 파일 위치 확인
 ls ~/.agt/
 
-# Tail logs in real-time
+# 실시간 로그 보기
 tail -f ~/.agt/agt.log
 
-# Search logs (macOS/Linux)
+# 로그 검색 (macOS/Linux)
 grep "ERROR" ~/.agt/agt.log
 ```
 
-### Log Levels
+### 로그 레벨
 
-- **INFO**: General information about operations
-- **DEBUG**: Detailed debugging information
-- **WARN**: Warning messages
-- **ERROR**: Error messages with stack traces
+- **INFO**: 작업에 대한 일반 정보
+- **DEBUG**: 상세한 디버깅 정보
+- **WARN**: 경고 메시지
+- **ERROR**: 스택 트레이스가 포함된 오류 메시지
 
-## 🔍 Troubleshooting
+## 🔍 문제 해결
 
-### ❌ Common Errors
+### ❌ 일반적인 오류
 
-1. **Not a Git repository**
+1. **Git 저장소가 아닌 경우**
 
    ```
    ❌ This is not a Git repository. Please run 'git init' first.
    ```
 
-   ➡️ Solution: Initialize Git repository with `git init`
+   ➡️ 해결: `git init` 명령어로 Git 저장소 초기화
 
-2. **GitHub CLI authentication error**
+2. **GitHub CLI 인증 오류**
 
    ```
    ❌ GitHub authentication failed. Please run 'gh auth login' first.
    ```
 
-   ➡️ Solution: Re-authenticate with `gh auth login` or run `agt setup`
+   ➡️ 해결: `gh auth login` 실행하여 재인증하거나 `agt setup` 실행
 
-3. **GitHub CLI not installed**
+3. **GitHub CLI 미설치**
 
    ```
    ❌ GitHub CLI is not installed. Please install it: https://cli.github.com/
    ```
 
-   ➡️ Solution: Install with `brew install gh` (macOS) or from the official website
+   ➡️ 해결: `brew install gh` (macOS) 또는 공식 사이트에서 설치
 
-4. **Network errors**
+4. **네트워크 오류**
 
    ```
    ❌ Network error: Please check your internet connection and try again.
    ```
 
-   ➡️ Solution: AGT automatically retries network operations up to 3 times. If the error persists, check your internet connection
+   ➡️ 해결: AGT는 네트워크 작업을 최대 3회까지 자동으로 재시도합니다. 오류가 계속되면 인터넷 연결을 확인하세요
 
-5. **Branch does not exist**
+5. **브랜치가 존재하지 않음**
 
    ```
    ❌ Source branch 'feature/123-...' does not exist
    ```
 
-   ➡️ Solution: Create the branch first with `agt branch`
+   ➡️ 해결: `agt branch`로 브랜치 먼저 생성
 
-6. **No commits**
+6. **커밋이 없는 경우**
 
    ```
    ❌ No commits found between 'main' and 'feature/123-...'.
    Please commit your changes before creating a PR.
    ```
 
-   ➡️ Solution: Commit your changes before creating a PR
+   ➡️ 해결: 변경사항을 커밋한 후 PR 생성
 
-7. **Invalid branch name**
+7. **잘못된 브랜치 이름**
    ```
    ❌ Invalid branch name: Branch names cannot contain shell special characters
    ```
-   ➡️ Solution: AGT automatically sanitizes branch names. If you see this error, the issue title may contain forbidden characters
+   ➡️ 해결: AGT는 브랜치 이름을 자동으로 정리합니다. 이 오류가 표시되면 이슈 제목에 금지된 문자가 포함되어 있을 수 있습니다
 
-### 🆘 Getting Help
+### 🆘 도움 받기
 
-If you're still experiencing issues:
+문제가 계속되는 경우:
 
-1. **Run setup wizard**: `agt setup` to verify your environment
-2. **Enable debug mode**: `AGT_DEBUG=true agt <command>` for detailed logs
-3. **Check logs**: View `~/.agt/agt.log` for error details
-4. **Report issue**: Create an issue on GitHub with the error message and logs
+1. **설정 마법사 실행**: `agt setup`으로 환경 확인
+2. **디버그 모드 활성화**: `AGT_DEBUG=true agt <command>`로 상세 로그 확인
+3. **로그 확인**: `~/.agt/agt.log`에서 오류 세부 정보 확인
+4. **이슈 제보**: 오류 메시지와 로그와 함께 GitHub에 이슈 생성
 
-## 🤝 Contributing
+## 🤝 기여하기
 
-Contributions are always welcome! Please feel free to open an issue or submit a pull request.
+기여는 언제나 환영합니다! 이슈를 열거나 풀 리퀘스트를 제출해 주세요.
 
-## 💳 License
+## 💳 라이선스
 
 [MIT](LICENSE)
 
